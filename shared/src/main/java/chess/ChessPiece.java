@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -56,9 +57,39 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
 
         if (piece.getPieceType() == PieceType.BISHOP) {
-            return List.of(new ChessMove(myPosition, new ChessPosition(1,8), null));
+            return new ChessBishopMoves(board,myPosition).generateBishopMoves();
         }
 
         return List.of();
+    }
+
+
+
+//    public boolean equals(Object o ){
+//        if (o == null) {
+//            return false;
+//        } if (o == this) {
+//            return true;
+//        } if (this.getClass() != o.getClass()) {
+//            return false;
+//        }
+//
+//        ChessPiece p = (ChessPiece)o;
+//        return (pieceColor.equals(p.getTeamColor()) && type.equals(p.getPieceType()));
+//    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
