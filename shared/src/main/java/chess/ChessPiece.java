@@ -62,25 +62,16 @@ public class ChessPiece {
             return new ChessRookMoves(board, myPosition).generateRookMoves();
         } if (piece.getPieceType() == PieceType.QUEEN) {
             return new ChessQueenMoves(board, myPosition).generateQueenMoves();
+        } if (piece.getPieceType() == PieceType.KNIGHT) {
+            return new ChessKnightMoves(board, myPosition).generateKnightMoves();
+        } if (piece.getPieceType() == PieceType.KING) {
+            return new ChessKingMoves(board, myPosition).generateKingMoves();
         }
 
         return List.of();
     }
 
 
-
-//    public boolean equals(Object o ){
-//        if (o == null) {
-//            return false;
-//        } if (o == this) {
-//            return true;
-//        } if (this.getClass() != o.getClass()) {
-//            return false;
-//        }
-//
-//        ChessPiece p = (ChessPiece)o;
-//        return (pieceColor.equals(p.getTeamColor()) && type.equals(p.getPieceType()));
-//    }
 
 
     @Override
