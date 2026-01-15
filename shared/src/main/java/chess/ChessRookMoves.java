@@ -16,8 +16,7 @@ public class ChessRookMoves {
 
     public Collection<ChessMove> generateRookMoves() {
         ChessPiece piece = board.getPiece(position);
-        ChessGame.TeamColor color = piece.getTeamColor();
-        List<ChessMove> validMoves = new ArrayList<ChessMove>();
+        List<ChessMove> validMoves = new ArrayList<>();
         validMoves.addAll(moveDir(1, 0));
         validMoves.addAll(moveDir(-1, 0));
         validMoves.addAll(moveDir(0, 1));
@@ -32,7 +31,7 @@ public class ChessRookMoves {
         int startRow = position.getRow();
         int startCol = position.getColumn();
         ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
-        ArrayList<ChessMove> moves = new ArrayList<ChessMove>();
+        ArrayList<ChessMove> moves = new ArrayList<>();
         int col = startCol + colDir;
         int row = startRow + rowDir;
         while (col < 9 && col > 0 && row < 9 && row > 0) {
