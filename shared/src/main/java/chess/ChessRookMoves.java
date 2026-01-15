@@ -15,7 +15,6 @@ public class ChessRookMoves {
     }
 
     public Collection<ChessMove> generateRookMoves() {
-        ChessPiece piece = board.getPiece(position);
         List<ChessMove> validMoves = new ArrayList<>();
         validMoves.addAll(moveDir(1, 0));
         validMoves.addAll(moveDir(-1, 0));
