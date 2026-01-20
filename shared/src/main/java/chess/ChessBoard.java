@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -40,7 +43,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
 
-    private void addPiece(ChessGame.TeamColor color) {
+    private void addSide(ChessGame.TeamColor color) {
         int fileOne;
         int fileTwo;
         if (color == ChessGame.TeamColor.WHITE) {
@@ -53,13 +56,15 @@ public class ChessBoard {
         for (ChessPiece.PieceType piece : ChessPiece.PieceType.values()) {
             if (piece == ChessPiece.PieceType.KING) {
                 ChessPiece king = new ChessPiece(color, piece);
-                ChessPosition kingPos =new ChessPosition(fileOne, 5);
+                ChessPosition kingPos = new ChessPosition(fileOne, 5);
                 addPiece(kingPos, king);
-            } if (piece == ChessPiece.PieceType.QUEEN) {
+            }
+            if (piece == ChessPiece.PieceType.QUEEN) {
                 ChessPiece queen = new ChessPiece(color, piece);
                 ChessPosition queenPos = new ChessPosition(fileOne, 4);
                 addPiece(queenPos, queen);
-            } if (piece == ChessPiece.PieceType.BISHOP) {
+            }
+            if (piece == ChessPiece.PieceType.BISHOP) {
                 ChessPiece bishop = new ChessPiece(color, piece);
                 ChessPosition bishopPosLeft = new ChessPosition(fileOne 3);
                 ChessPosition bishopPosRight = new ChessPosition(fileTwo, 6);
@@ -71,7 +76,8 @@ public class ChessBoard {
                 ChessPosition knightPosRight = new ChessPosition(fileOne, 7);
                 addPiece(knightPosLeft, knight);
                 addPiece(knightPosRight, knight);
-            } if (piece == ChessPiece.PieceType.ROOK) {
+            }
+            if (piece == ChessPiece.PieceType.ROOK) {
                 ChessPiece rook = new ChessPiece(color, piece);
                 ChessPosition rookPosLeft = new ChessPosition(fileOne, 1);
                 ChessPosition rookPosRight = new ChessPosition(fileOne, 8);
@@ -84,11 +90,26 @@ public class ChessBoard {
                     addPiece(pawnPos, pawn);
                 }
             }
+        }
     }
     public void resetBoard() {
         // White reset
-        ChessGame.TeamColor color = ChessGame.TeamColor.WHITE;
+        addSide(ChessGame.TeamColor.WHITE);
+        // Black reset
+        addSide(ChessGame.TeamColor.BLACK);
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
         }
+        ChessBoard that = (ChessBoard) o;
+        return Objects.deepEquals(squares, that.squares);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(squares);
     }
 }
