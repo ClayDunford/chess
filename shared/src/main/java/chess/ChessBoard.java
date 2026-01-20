@@ -1,7 +1,6 @@
 package chess;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -58,26 +57,23 @@ public class ChessBoard {
                 ChessPiece king = new ChessPiece(color, piece);
                 ChessPosition kingPos = new ChessPosition(fileOne, 5);
                 addPiece(kingPos, king);
-            }
-            if (piece == ChessPiece.PieceType.QUEEN) {
+            } else if (piece == ChessPiece.PieceType.QUEEN) {
                 ChessPiece queen = new ChessPiece(color, piece);
                 ChessPosition queenPos = new ChessPosition(fileOne, 4);
                 addPiece(queenPos, queen);
-            }
-            if (piece == ChessPiece.PieceType.BISHOP) {
+            } else if (piece == ChessPiece.PieceType.BISHOP) {
                 ChessPiece bishop = new ChessPiece(color, piece);
-                ChessPosition bishopPosLeft = new ChessPosition(fileOne 3);
+                ChessPosition bishopPosLeft = new ChessPosition(fileOne, 3);
                 ChessPosition bishopPosRight = new ChessPosition(fileTwo, 6);
                 addPiece(bishopPosLeft, bishop);
                 addPiece(bishopPosRight, bishop);
-            } if (piece == ChessPiece.PieceType.KNIGHT) {
+            } else if (piece == ChessPiece.PieceType.KNIGHT) {
                 ChessPiece knight = new ChessPiece(color, piece);
                 ChessPosition knightPosLeft = new ChessPosition(fileOne, 2);
                 ChessPosition knightPosRight = new ChessPosition(fileOne, 7);
                 addPiece(knightPosLeft, knight);
                 addPiece(knightPosRight, knight);
-            }
-            if (piece == ChessPiece.PieceType.ROOK) {
+            } else if (piece == ChessPiece.PieceType.ROOK) {
                 ChessPiece rook = new ChessPiece(color, piece);
                 ChessPosition rookPosLeft = new ChessPosition(fileOne, 1);
                 ChessPosition rookPosRight = new ChessPosition(fileOne, 8);
@@ -97,6 +93,7 @@ public class ChessBoard {
         addSide(ChessGame.TeamColor.WHITE);
         // Black reset
         addSide(ChessGame.TeamColor.BLACK);
+
     }
 
     @Override
