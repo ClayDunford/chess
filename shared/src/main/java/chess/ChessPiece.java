@@ -66,9 +66,10 @@ public class ChessPiece {
             return new ChessKnightMoves(board, myPosition).generateKnightMoves();
         } if (piece.getPieceType() == PieceType.KING) {
             return new ChessKingMoves(board, myPosition).generateKingMoves();
+        } else {
+            return new ChessPawnMoves(board, myPosition).generatePawnMoves();
         }
 
-        return List.of();
     }
 
 
