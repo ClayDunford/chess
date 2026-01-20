@@ -64,7 +64,7 @@ public class ChessBoard {
             } else if (piece == ChessPiece.PieceType.BISHOP) {
                 ChessPiece bishop = new ChessPiece(color, piece);
                 ChessPosition bishopPosLeft = new ChessPosition(fileOne, 3);
-                ChessPosition bishopPosRight = new ChessPosition(fileTwo, 6);
+                ChessPosition bishopPosRight = new ChessPosition(fileOne, 6);
                 addPiece(bishopPosLeft, bishop);
                 addPiece(bishopPosRight, bishop);
             } else if (piece == ChessPiece.PieceType.KNIGHT) {
@@ -108,5 +108,12 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "squares=" + Arrays.deepToString(squares) +
+                '}';
     }
 }
