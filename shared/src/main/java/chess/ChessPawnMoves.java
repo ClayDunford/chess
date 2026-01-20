@@ -111,7 +111,7 @@ public class ChessPawnMoves {
             }
         }
         if (startCol > 1 && board.getPiece(downLeft) != null && board.getPiece(downLeft).getTeamColor() != color) {
-            if (startRow == 7) {
+            if (startRow == 2) {
                 // Handling Promotion
                 for (ChessPiece.PieceType piece : ChessPiece.PieceType.values()) {
                     if (piece != ChessPiece.PieceType.PAWN && piece != ChessPiece.PieceType.KING) {
@@ -123,7 +123,7 @@ public class ChessPawnMoves {
             }
         }
         if (startCol < 8 && board.getPiece(downRight) != null && board.getPiece(downRight).getTeamColor() != color) {
-            if (startRow == 7) {
+            if (startRow == 2) {
                 // Handling Promotion
                 for (ChessPiece.PieceType piece : ChessPiece.PieceType.values()) {
                     if (piece != ChessPiece.PieceType.PAWN && piece != ChessPiece.PieceType.KING) {
