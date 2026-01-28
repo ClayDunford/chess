@@ -42,57 +42,24 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
 
-    private void addSide(ChessGame.TeamColor color) {
-        int fileOne;
-        int fileTwo;
-        if (color == ChessGame.TeamColor.WHITE) {
-            fileOne = 1;
-            fileTwo = 2;
-        } else {
-            fileOne = 8;
-            fileTwo = 7;
-        }
-        for (ChessPiece.PieceType piece : ChessPiece.PieceType.values()) {
-            if (piece == ChessPiece.PieceType.KING) {
-                ChessPiece king = new ChessPiece(color, piece);
-                ChessPosition kingPos = new ChessPosition(fileOne, 5);
-                addPiece(kingPos, king);
-            } else if (piece == ChessPiece.PieceType.QUEEN) {
-                ChessPiece queen = new ChessPiece(color, piece);
-                ChessPosition queenPos = new ChessPosition(fileOne, 4);
-                addPiece(queenPos, queen);
-            } else if (piece == ChessPiece.PieceType.BISHOP) {
-                ChessPiece bishop = new ChessPiece(color, piece);
-                ChessPosition bishopPosLeft = new ChessPosition(fileOne, 3);
-                ChessPosition bishopPosRight = new ChessPosition(fileOne, 6);
-                addPiece(bishopPosLeft, bishop);
-                addPiece(bishopPosRight, bishop);
-            } else if (piece == ChessPiece.PieceType.KNIGHT) {
-                ChessPiece knight = new ChessPiece(color, piece);
-                ChessPosition knightPosLeft = new ChessPosition(fileOne, 2);
-                ChessPosition knightPosRight = new ChessPosition(fileOne, 7);
-                addPiece(knightPosLeft, knight);
-                addPiece(knightPosRight, knight);
-            } else if (piece == ChessPiece.PieceType.ROOK) {
-                ChessPiece rook = new ChessPiece(color, piece);
-                ChessPosition rookPosLeft = new ChessPosition(fileOne, 1);
-                ChessPosition rookPosRight = new ChessPosition(fileOne, 8);
-                addPiece(rookPosLeft, rook);
-                addPiece(rookPosRight, rook);
-            } else {
-                for (int col = 1; col < 9; col++) {
-                    ChessPiece pawn = new ChessPiece(color, piece);
-                    ChessPosition pawnPos = new ChessPosition(fileTwo, col);
-                    addPiece(pawnPos, pawn);
-                }
-            }
-        }
-    }
+
     public void resetBoard() {
-        // White reset
-        addSide(ChessGame.TeamColor.WHITE);
-        // Black reset
-        addSide(ChessGame.TeamColor.BLACK);
+        squares = new ChessPiece[8][8];
+        ChessPiece.PieceType[] pieceSchedule = {
+                ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KING, ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK,
+        };
+
+        for (int col = 1; col < 9; col++) {
+            addPiece(new ChessPosition(1, col), new ChessPiece(ChessGame.TeamColor.WHITE, pieceSchedule[col - 1]));
+            addPiece(new ChessPosition(2, col), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+
+            addPiece(new ChessPosition(8, col), new ChessPiece(ChessGame.TeamColor.BLACK, pieceSchedule[col - 1]));
+            addPiece(new ChessPosition(7, col), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+
+        }
 
     }
 
