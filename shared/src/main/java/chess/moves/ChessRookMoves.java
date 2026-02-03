@@ -1,26 +1,33 @@
-package chess;
+package chess.moves;
 
-import java.util.*;
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-public class ChessBishopMoves {
+public class ChessRookMoves {
+
     private final ChessBoard board;
     private final ChessPosition position;
 
-    public ChessBishopMoves(ChessBoard board, ChessPosition position) {
+    public ChessRookMoves(ChessBoard board, ChessPosition position) {
         this.board = board;
         this.position = position;
     }
 
-    public Collection<ChessMove> generateBishopMoves() {
+    public Collection<ChessMove> generateRookMoves() {
         List<ChessMove> validMoves = new ArrayList<>();
-        validMoves.addAll(moveDir(1, 1));
-        validMoves.addAll(moveDir(1, -1));
-        validMoves.addAll(moveDir(-1, 1));
-        validMoves.addAll(moveDir(-1, -1));
+        validMoves.addAll(moveDir(1, 0));
+        validMoves.addAll(moveDir(-1, 0));
+        validMoves.addAll(moveDir(0, 1));
+        validMoves.addAll(moveDir(0, -1));
+
         return validMoves;
     }
-
 
     private ArrayList<ChessMove> moveDir(int rowDir, int colDir) {
         // colDir determines the direction the columns move, +1 = up, -1 = down
@@ -48,4 +55,3 @@ public class ChessBishopMoves {
         return moves;
     }
 }
-

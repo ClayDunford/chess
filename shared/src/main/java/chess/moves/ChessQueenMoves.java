@@ -1,21 +1,31 @@
-package chess;
+package chess.moves;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 
-public class ChessRookMoves {
+import java.util.*;
+
+public class ChessQueenMoves {
 
     private final ChessBoard board;
     private final ChessPosition position;
 
-    public ChessRookMoves(ChessBoard board, ChessPosition position) {
+    public ChessQueenMoves(ChessBoard board, ChessPosition position) {
         this.board = board;
         this.position = position;
     }
 
-    public Collection<ChessMove> generateRookMoves() {
+    public Collection<ChessMove> generateQueenMoves() {
         List<ChessMove> validMoves = new ArrayList<>();
+        // Bishop Moves
+        validMoves.addAll(moveDir(1, 1));
+        validMoves.addAll(moveDir(1, -1));
+        validMoves.addAll(moveDir(-1, 1));
+        validMoves.addAll(moveDir(-1, -1));
+
+        // Rook Moves
         validMoves.addAll(moveDir(1, 0));
         validMoves.addAll(moveDir(-1, 0));
         validMoves.addAll(moveDir(0, 1));

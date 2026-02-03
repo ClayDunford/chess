@@ -1,26 +1,37 @@
-package chess;
+package chess.moves;
+
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 
 import java.util.*;
 
-public class ChessKnightMoves {
+public class ChessKingMoves {
+
+
     private final ChessBoard board;
     private final ChessPosition position;
 
-    public ChessKnightMoves(ChessBoard board, ChessPosition position) {
+    public ChessKingMoves(ChessBoard board, ChessPosition position) {
         this.board = board;
         this.position = position;
     }
 
-    public Collection<ChessMove> generateKnightMoves() {
+    public Collection<ChessMove> generateKingMoves() {
         List<ChessMove> validMoves = new ArrayList<>();
-        validMoves.addAll(moveDir(2,1));
-        validMoves.addAll(moveDir(2, -1));
-        validMoves.addAll(moveDir(-2, 1));
-        validMoves.addAll(moveDir(-2, -1));
-        validMoves.addAll(moveDir(1, 2));
-        validMoves.addAll(moveDir(-1, 2));
-        validMoves.addAll(moveDir(1, -2));
-        validMoves.addAll(moveDir(-1, -2));
+        // Bishop Moves
+        validMoves.addAll(moveDir(1, 1));
+        validMoves.addAll(moveDir(1, -1));
+        validMoves.addAll(moveDir(-1, 1));
+        validMoves.addAll(moveDir(-1, -1));
+
+        // Rook Moves
+        validMoves.addAll(moveDir(1, 0));
+        validMoves.addAll(moveDir(-1, 0));
+        validMoves.addAll(moveDir(0, 1));
+        validMoves.addAll(moveDir(0, -1));
+
         return validMoves;
     }
 
@@ -46,5 +57,4 @@ public class ChessKnightMoves {
             }
         } return moves;
     }
-
 }
