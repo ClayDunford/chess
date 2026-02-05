@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -62,6 +63,14 @@ public class ChessBoard {
         }
 
     }
+
+    public ChessPiece[][] squareDeepCopy () {
+        ChessPiece[][] copy = new ChessPiece[8][8];
+        IntStream.range(0, 8).forEach(row -> System.arraycopy(squares[row], 0, copy[row], 0, 8));
+        return copy;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {

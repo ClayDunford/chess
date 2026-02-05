@@ -57,11 +57,12 @@ public class ChessGame {
         if (curPiece == null) {
             return null;
         } else {
+            boolean inCheck = isInCheck(curColor);
             Collection<ChessMove> moves = curPiece.pieceMoves(board, startPosition);
             Collection<ChessMove> cleanMoves = new ArrayList<>();
             for (ChessMove move : moves) {
                 ChessBoard tempBoard = new ChessBoard();
-                tempBoard.squares = board.squares;
+                tempBoard.squares = board.squareDeepCopy();
                 ChessPosition startPos = move.getStartPosition();
                 ChessPosition endPos = move.getEndPosition();
 
@@ -70,8 +71,9 @@ public class ChessGame {
                     curPiece = new ChessPiece(curColor, move.getPromotionPiece());
                 }
                 tempBoard.addPiece(endPos, curPiece);
-                ChessCheckChecker inCheck = new ChessCheckChecker(tempBoard, curColor);
-                if (!inCheck.check()) {
+
+                ChessCheckChecker moveInCheck = new ChessCheckChecker(tempBoard, curColor);
+                if (!moveInCheck.check()) {
                     cleanMoves.add(move);
                 }
             }
