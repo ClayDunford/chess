@@ -56,7 +56,24 @@ public class ChessGame {
         if (curPiece == null) {
             return null;
         } else {
-            return curPiece.pieceMoves(board, startPosition);
+            Collection<ChessMove> moves = curPiece.pieceMoves(board, startPosition);
+            for (ChessMove move : moves) {
+                ChessBoard tempBoard = new ChessBoard();
+                tempBoard.squares = board.squares;
+                ChessPosition startPos = move.getStartPosition();
+                ChessPosition endPos = move.getEndPosition();
+
+                tempBoard.addPiece(startPos, null);
+                if (move.getPromotionPiece() != null) {
+                    curPiece = new ChessPiece(curColor, move.getPromotionPiece());
+                }
+                tempBoard.addPiece(endPos, curPiece);
+                ChessCheckChecker inCheck = new ChessCheckChecker(tempBoard, curColor);
+                if (inCheck.check()) {
+                    moves.remove(move);
+                }
+            }
+            return moves;
         }
     }
 
@@ -111,7 +128,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        return false;
+        return new ChessCheckChecker(board, teamColor).check();
     }
 
     /**
