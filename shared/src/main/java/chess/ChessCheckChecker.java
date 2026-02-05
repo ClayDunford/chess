@@ -13,7 +13,9 @@ public class ChessCheckChecker {
     }
 
     public boolean check() {
-
+        if (bishopqueen() || rookqueen() || knight() || pawn()) {
+            return true;
+        }
         return false;
     }
 
@@ -139,7 +141,32 @@ public class ChessCheckChecker {
     }
 
     private boolean pawn() {
-        return false;
+        if (color == ChessGame.TeamColor.WHITE) {
+            // Up Left
+            ChessPiece p = pawnMoveDir(1, -1);
+            if (p != null) {
+                return true;
+            }
+            // Up Right
+            p = pawnMoveDir(1, 1);
+            if (p != null) {
+                return true;
+            }
+            return false;
+        } else {
+            // Down Left
+            ChessPiece p = pawnMoveDir(-1, -1);
+            if (p != null) {
+                return true;
+            }
+            p = pawnMoveDir(-1, 1);
+            // Down Right
+            if (p != null) {
+                return true;
+            }
+            return false;
+        }
+
     }
 
     private boolean boardEdge(int row, int col) {
@@ -165,6 +192,26 @@ public class ChessCheckChecker {
                 return null;
             }
         }
+        return null;
+    }
+
+    private ChessPiece pawnMoveDir(int rowDir, int colDir) {
+        int startRow = kingPos.getRow();
+        int startCol = kingPos.getColumn();
+
+        int row = startRow + rowDir;
+        int col = startCol + colDir;
+        if (boardEdge(row, col)) {
+            return null;
+        }
+
+        ChessPosition newPos = new ChessPosition(row, col);
+        if (board.getPiece(newPos) != null &&  board.getPiece(newPos).getTeamColor() != color) {
+            if (board.getPiece(newPos).getPieceType() == ChessPiece.PieceType.PAWN) {
+                return board.getPiece(newPos);
+            }
+        }
+
         return null;
     }
 
