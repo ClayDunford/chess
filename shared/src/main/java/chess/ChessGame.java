@@ -84,11 +84,12 @@ public class ChessGame {
         }
 
 
-        // At this point there should only be valid moves
+        // At this point, we should know the move is valid
 
         // Removing the piece at that location
         board.addPiece(startPos, null);
 
+        // Adding the new piece
         // Checking for promotion
         if (move.getPromotionPiece() != null) {
             curPiece = new ChessPiece(curColor, move.getPromotionPiece());
@@ -120,6 +121,9 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+
+
+
         return false;
     }
 
