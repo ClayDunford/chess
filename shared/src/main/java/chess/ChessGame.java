@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -57,6 +58,7 @@ public class ChessGame {
             return null;
         } else {
             Collection<ChessMove> moves = curPiece.pieceMoves(board, startPosition);
+            Collection<ChessMove> cleanMoves = new ArrayList<>();
             for (ChessMove move : moves) {
                 ChessBoard tempBoard = new ChessBoard();
                 tempBoard.squares = board.squares;
@@ -69,11 +71,11 @@ public class ChessGame {
                 }
                 tempBoard.addPiece(endPos, curPiece);
                 ChessCheckChecker inCheck = new ChessCheckChecker(tempBoard, curColor);
-                if (inCheck.check()) {
-                    moves.remove(move);
+                if (!inCheck.check()) {
+                    cleanMoves.add(move);
                 }
             }
-            return moves;
+            return cleanMoves;
         }
     }
 

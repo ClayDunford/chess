@@ -13,10 +13,7 @@ public class ChessCheckChecker {
     }
 
     public boolean check() {
-        if (bishopqueen() || rookqueen() || knight() || pawn()) {
-            return true;
-        }
-        return false;
+        return bishopqueen() || rookqueen() || knight() || pawn();
     }
 
     private ChessPosition kingFinder() {
@@ -201,7 +198,7 @@ public class ChessCheckChecker {
 
         int row = startRow + rowDir;
         int col = startCol + colDir;
-        if (boardEdge(row, col)) {
+        if (!boardEdge(row, col)) {
             return null;
         }
 
