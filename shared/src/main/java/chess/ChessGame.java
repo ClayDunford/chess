@@ -134,6 +134,27 @@ public class ChessGame {
         return new ChessCheckChecker(board, teamColor).check();
     }
 
+    private boolean pieceChecker() {
+        // Finds every piece and checks if they have any valid moves
+        // True if they do have valid moves
+        // False if they do not
+        Collection<ChessPiece> debugPiecesMoves = new ArrayList<>();
+        for(int col = 1; col < 9; col++) {
+            for (int row = 1; row < 9; row++) {
+                ChessPosition curPosition = new ChessPosition(row, col);
+                ChessPiece curPiece = board.getPiece(curPosition);
+                if (curPiece != null && curPiece.getTeamColor() == curColor) {
+                        Collection<ChessMove> moves = validMoves(curPosition);
+                    if (!validMoves(curPosition).isEmpty()) {
+                        debugPiecesMoves.add(curPiece);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Determines if the given team is in checkmate
      *
@@ -142,9 +163,10 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         // Write move checking for every piece on the board that works for checkmate and stalemate
-
-
-        return false;
+        boolean check = isInCheck(teamColor);
+        boolean pieces = pieceChecker();
+        int egg = 1;
+        return isInCheck(teamColor) && !pieceChecker();
     }
 
     /**
@@ -155,7 +177,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return false;
+        return !isInCheck(teamColor) && !pieceChecker();
     }
 
     /**
