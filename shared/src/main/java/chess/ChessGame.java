@@ -57,7 +57,6 @@ public class ChessGame {
         if (curPiece == null) {
             return null;
         } else {
-            boolean inCheck = isInCheck(curColor);
             Collection<ChessMove> moves = curPiece.pieceMoves(board, startPosition);
             Collection<ChessMove> cleanMoves = new ArrayList<>();
             for (ChessMove move : moves) {
@@ -142,7 +141,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-
+        // Write move checking for every piece on the board that works for checkmate and stalemate
 
 
         return false;

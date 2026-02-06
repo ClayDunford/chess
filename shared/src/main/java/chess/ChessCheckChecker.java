@@ -89,46 +89,46 @@ public class ChessCheckChecker {
     private boolean knight() {
         // Checking if there is a piece there
         // Up + Left
-        ChessPiece k = moveDir(2, -1);
+        ChessPiece k = pawnknightMoveDir(2, -1);
         if (k != null) {
             return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
         }
         // Up + Right
-        k = moveDir(2, 1);
+        k = pawnknightMoveDir(2, 1);
         if (k != null) {
             return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
         }
         // Down + Left
-        k = moveDir(-2, -1);
+        k = pawnknightMoveDir(-2, -1);
         if (k != null) {
             return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
         }
         // Down + Right
-        k = moveDir(-2, 1);
+        k = pawnknightMoveDir(-2, 1);
         if (k != null) {
             return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
         }
 
         // Right + Down
-        k = moveDir(-1, 2);
+        k = pawnknightMoveDir(-1, 2);
         if (k != null) {
             return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
         }
 
         // Right + Up
-        k = moveDir(1, 2);
+        k = pawnknightMoveDir(1, 2);
         if (k != null) {
             return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
         }
 
         // Left + Down
-        k = moveDir(-1, -2);
+        k = pawnknightMoveDir(-1, -2);
         if (k != null) {
             return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
         }
 
         // Left + Up
-        k = moveDir(1, -2);
+        k = pawnknightMoveDir(1, -2);
         if (k != null) {
             return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
         }
@@ -138,31 +138,25 @@ public class ChessCheckChecker {
     }
 
     private boolean pawn() {
+        ChessPiece p;
         if (color == ChessGame.TeamColor.WHITE) {
             // Up Left
-            ChessPiece p = pawnMoveDir(1, -1);
+            p = pawnknightMoveDir(1, -1);
             if (p != null) {
                 return true;
             }
             // Up Right
-            p = pawnMoveDir(1, 1);
-            if (p != null) {
-                return true;
-            }
-            return false;
+            p = pawnknightMoveDir(1, 1);
         } else {
             // Down Left
-            ChessPiece p = pawnMoveDir(-1, -1);
+            p = pawnknightMoveDir(-1, -1);
             if (p != null) {
                 return true;
             }
-            p = pawnMoveDir(-1, 1);
+            p = pawnknightMoveDir(-1, 1);
             // Down Right
-            if (p != null) {
-                return true;
-            }
-            return false;
         }
+        return p != null;
 
     }
 
@@ -192,7 +186,7 @@ public class ChessCheckChecker {
         return null;
     }
 
-    private ChessPiece pawnMoveDir(int rowDir, int colDir) {
+    private ChessPiece pawnknightMoveDir(int rowDir, int colDir) {
         int startRow = kingPos.getRow();
         int startCol = kingPos.getColumn();
 
