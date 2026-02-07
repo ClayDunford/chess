@@ -36,24 +36,32 @@ public class ChessCheckChecker {
         // Up Left
         ChessPiece bq = moveDir(1, -1);
         if (bq != null){
-            return bq.getPieceType() == ChessPiece.PieceType.QUEEN || bq.getPieceType() == ChessPiece.PieceType.BISHOP;
+            if (bq.getPieceType() == ChessPiece.PieceType.QUEEN || bq.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                return true;
+            }
         }
 
         // Up Right
         bq = moveDir(1, 1);
-        if (bq != null) {
-            return bq.getPieceType() == ChessPiece.PieceType.QUEEN || bq.getPieceType() == ChessPiece.PieceType.BISHOP;
+        if (bq != null){
+            if (bq.getPieceType() == ChessPiece.PieceType.QUEEN || bq.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                return true;
+            }
         }
 
         // Down Left
         bq = moveDir(-1, -1);
-        if (bq != null) {
-            return bq.getPieceType() == ChessPiece.PieceType.QUEEN || bq.getPieceType() == ChessPiece.PieceType.BISHOP;
+        if (bq != null){
+            if (bq.getPieceType() == ChessPiece.PieceType.QUEEN || bq.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                return true;
+            }
         }
         // Down Right
         bq = moveDir(-1, 1);
-        if (bq != null) {
-            return bq.getPieceType() == ChessPiece.PieceType.QUEEN || bq.getPieceType() == ChessPiece.PieceType.BISHOP;
+        if (bq != null){
+            if (bq.getPieceType() == ChessPiece.PieceType.QUEEN || bq.getPieceType() == ChessPiece.PieceType.BISHOP) {
+                return true;
+            }
         }
         return false;
     }
@@ -63,25 +71,33 @@ public class ChessCheckChecker {
         // Up
         ChessPiece rq = moveDir(1, 0);
         if (rq != null) {
-            return rq.getPieceType() == ChessPiece.PieceType.QUEEN || rq.getPieceType() == ChessPiece.PieceType.ROOK;
+            if  (rq.getPieceType() == ChessPiece.PieceType.QUEEN || rq.getPieceType() == ChessPiece.PieceType.ROOK) {
+                return true;
+            }
         }
 
         // Down
         rq = moveDir(-1, 0);
         if (rq != null) {
-            return rq.getPieceType() == ChessPiece.PieceType.QUEEN || rq.getPieceType() == ChessPiece.PieceType.ROOK;
+            if  (rq.getPieceType() == ChessPiece.PieceType.QUEEN || rq.getPieceType() == ChessPiece.PieceType.ROOK) {
+                return true;
+            }
         }
 
         // Left
         rq = moveDir(0, -1);
         if (rq != null) {
-            return rq.getPieceType() == ChessPiece.PieceType.QUEEN || rq.getPieceType() == ChessPiece.PieceType.ROOK;
+            if  (rq.getPieceType() == ChessPiece.PieceType.QUEEN || rq.getPieceType() == ChessPiece.PieceType.ROOK) {
+                return true;
+            }
         }
 
         // Right
         rq = moveDir(0, 1);
         if (rq != null) {
-            return rq.getPieceType() == ChessPiece.PieceType.QUEEN || rq.getPieceType() == ChessPiece.PieceType.ROOK;
+            if  (rq.getPieceType() == ChessPiece.PieceType.QUEEN || rq.getPieceType() == ChessPiece.PieceType.ROOK) {
+                return true;
+            }
         }
         return false;
     }
@@ -91,46 +107,62 @@ public class ChessCheckChecker {
         // Up + Left
         ChessPiece k = pawnknightMoveDir(2, -1);
         if (k != null) {
-            return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
+            if (k.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                return true;
+            }
         }
         // Up + Right
         k = pawnknightMoveDir(2, 1);
         if (k != null) {
-            return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
+            if (k.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                return true;
+            }
         }
         // Down + Left
         k = pawnknightMoveDir(-2, -1);
         if (k != null) {
-            return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
+            if (k.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                return true;
+            }
         }
         // Down + Right
         k = pawnknightMoveDir(-2, 1);
         if (k != null) {
-            return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
+            if (k.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                return true;
+            }
         }
 
         // Right + Down
         k = pawnknightMoveDir(-1, 2);
         if (k != null) {
-            return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
+            if (k.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                return true;
+            }
         }
 
         // Right + Up
         k = pawnknightMoveDir(1, 2);
         if (k != null) {
-            return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
+            if (k.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                return true;
+            }
         }
 
         // Left + Down
         k = pawnknightMoveDir(-1, -2);
         if (k != null) {
-            return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
+            if (k.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                return true;
+            }
         }
 
         // Left + Up
         k = pawnknightMoveDir(1, -2);
         if (k != null) {
-            return k.getPieceType() == ChessPiece.PieceType.KNIGHT;
+            if (k.getPieceType() == ChessPiece.PieceType.KNIGHT) {
+                return true;
+            }
         }
 
         return false;
@@ -143,23 +175,31 @@ public class ChessCheckChecker {
             // Up Left
             p = pawnknightMoveDir(1, -1);
             if (p != null) {
-                return p.getPieceType() == ChessPiece.PieceType.PAWN;
+                if (p.getPieceType() == ChessPiece.PieceType.PAWN) {
+                    return true;
+                }
             }
             // Up Right
             p = pawnknightMoveDir(1, 1);
             if (p != null) {
-                return p.getPieceType() == ChessPiece.PieceType.PAWN;
+                if (p.getPieceType() == ChessPiece.PieceType.PAWN) {
+                    return true;
+                }
             }
         } else {
             // Down Left
             p = pawnknightMoveDir(-1, -1);
             if (p != null) {
-                return p.getPieceType() == ChessPiece.PieceType.PAWN;
+                if (p.getPieceType() == ChessPiece.PieceType.PAWN) {
+                    return true;
+                }
             }
             // Down Right
             p = pawnknightMoveDir(-1, 1);
             if (p != null) {
-                return p.getPieceType() == ChessPiece.PieceType.PAWN;
+                if (p.getPieceType() == ChessPiece.PieceType.PAWN) {
+                    return true;
+                }
             }
         }
         return false;
@@ -171,42 +211,58 @@ public class ChessCheckChecker {
         // Up Left
         K = pawnknightMoveDir(1, -1);
         if (K != null) {
-            return K.getPieceType() == ChessPiece.PieceType.KING;
+            if (K.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
         }
         // Up
         K = pawnknightMoveDir(1, 0);
         if (K != null) {
-            return K.getPieceType() == ChessPiece.PieceType.KING;
+            if (K.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
         }
         // Up + Right
         K = pawnknightMoveDir(1, 1);
         if (K != null) {
-            return K.getPieceType() == ChessPiece.PieceType.KING;
+            if (K.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
         }
         // Right
         K = pawnknightMoveDir(0, 1);
         if (K != null) {
-            return K.getPieceType() == ChessPiece.PieceType.KING;
+            if (K.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
         }
         // Down + Right
         K = pawnknightMoveDir(-1, 1);
         if (K != null) {
-            return K.getPieceType() == ChessPiece.PieceType.KING;
+            if (K.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
         }
         // Down
         K = pawnknightMoveDir(-1, 0);
         if (K != null) {
-            return K.getPieceType() == ChessPiece.PieceType.KING;
+            if (K.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
         }
         // Down + Left
         K = pawnknightMoveDir(-1, -1);
         if (K != null) {
-            return K.getPieceType() == ChessPiece.PieceType.KING;
+            if (K.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
         }
         // Left
         K = pawnknightMoveDir(0, -1);
         if (K != null) {
-            return K.getPieceType() == ChessPiece.PieceType.KING;
+            if (K.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
         }
         return false;
     }

@@ -57,6 +57,7 @@ public class ChessGame {
         if (curPiece == null) {
             return null;
         } else {
+            TeamColor color = curPiece.getTeamColor();
             Collection<ChessMove> moves = curPiece.pieceMoves(board, startPosition);
             Collection<ChessMove> cleanMoves = new ArrayList<>();
             for (ChessMove move : moves) {
@@ -67,11 +68,11 @@ public class ChessGame {
 
                 tempBoard.addPiece(startPos, null);
                 if (move.getPromotionPiece() != null) {
-                    curPiece = new ChessPiece(curColor, move.getPromotionPiece());
+                    curPiece = new ChessPiece(color, move.getPromotionPiece());
                 }
                 tempBoard.addPiece(endPos, curPiece);
 
-                ChessCheckChecker moveInCheck = new ChessCheckChecker(tempBoard, curColor);
+                ChessCheckChecker moveInCheck = new ChessCheckChecker(tempBoard, color);
                 if (!moveInCheck.check()) {
                     cleanMoves.add(move);
                 }
@@ -134,7 +135,7 @@ public class ChessGame {
         return new ChessCheckChecker(board, teamColor).check();
     }
 
-    private boolean pieceChecker() {
+    private boolean pieceChecker(TeamColor color) {
         // Finds every piece and checks if they have any valid moves
         // True if they do have valid moves
         // False if they do not
@@ -143,7 +144,7 @@ public class ChessGame {
             for (int row = 1; row < 9; row++) {
                 ChessPosition curPosition = new ChessPosition(row, col);
                 ChessPiece curPiece = board.getPiece(curPosition);
-                if (curPiece != null && curPiece.getTeamColor() == curColor) {
+                if (curPiece != null && curPiece.getTeamColor() == color) {
                         Collection<ChessMove> moves = validMoves(curPosition);
                     if (!validMoves(curPosition).isEmpty()) {
                         debugPiecesMoves.add(curPiece);
@@ -164,9 +165,9 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         // Write move checking for every piece on the board that works for checkmate and stalemate
         boolean check = isInCheck(teamColor);
-        boolean pieces = pieceChecker();
+        boolean pieces = pieceChecker(teamColor);
         int egg = 1;
-        return isInCheck(teamColor) && !pieceChecker();
+        return isInCheck(teamColor) && !pieceChecker(teamColor);
     }
 
     /**
@@ -177,7 +178,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return !isInCheck(teamColor) && !pieceChecker();
+        return !isInCheck(teamColor) && !pieceChecker(teamColor);
     }
 
     /**
