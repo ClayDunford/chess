@@ -136,9 +136,9 @@ public class ChessGame {
     }
 
     private boolean pieceChecker(TeamColor color) {
-        // Finds every piece and checks if they have any valid moves
-        // True if they do have valid moves
-        // False if they do not
+        /*Finds every piece and checks if they have any valid moves
+        True if they do have valid moves False if they do not
+         */
         Collection<ChessPiece> debugPiecesMoves = new ArrayList<>();
         for(int col = 1; col < 9; col++) {
             for (int row = 1; row < 9; row++) {
