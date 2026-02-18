@@ -145,12 +145,12 @@ public class ChessGame {
                 ChessPiece curPiece = board.getPiece(curPosition);
                 if (curPiece != null && curPiece.getTeamColor() == color) {
                     if (!validMoves(curPosition).isEmpty()) {
-                        return true;
+                        return false;
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -161,7 +161,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         // Write move checking for every piece on the board that works for checkmate and stalemate
-        return isInCheck(teamColor) && !pieceChecker(teamColor);
+        return isInCheck(teamColor) && pieceChecker(teamColor);
     }
 
     /**
@@ -172,7 +172,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return !isInCheck(teamColor) && !pieceChecker(teamColor);
+        return !isInCheck(teamColor) && pieceChecker(teamColor);
     }
 
     /**
