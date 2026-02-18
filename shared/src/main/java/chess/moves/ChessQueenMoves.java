@@ -7,14 +7,10 @@ import chess.ChessPosition;
 
 import java.util.*;
 
-public class ChessQueenMoves {
-
-    private final ChessBoard board;
-    private final ChessPosition position;
+public class ChessQueenMoves extends ChessMoveGenerator{
 
     public ChessQueenMoves(ChessBoard board, ChessPosition position) {
-        this.board = board;
-        this.position = position;
+        super(board, position);
     }
 
     public Collection<ChessMove> generateQueenMoves() {
@@ -34,29 +30,4 @@ public class ChessQueenMoves {
         return validMoves;
     }
 
-    private ArrayList<ChessMove> moveDir(int rowDir, int colDir) {
-        // colDir determines the direction the columns move, +1 = up, -1 = down
-        // rowDir determines the direction the rows move, +1 = right, -1 = left
-        int startRow = position.getRow();
-        int startCol = position.getColumn();
-        ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
-        ArrayList<ChessMove> moves = new ArrayList<>();
-        int col = startCol + colDir;
-        int row = startRow + rowDir;
-        while (col < 9 && col > 0 && row < 9 && row > 0) {
-            ChessPosition newPos = new ChessPosition(row, col);
-            if (board.getPiece(newPos) == null) {
-                moves.add(new ChessMove(position, newPos, null));
-                col = col + colDir;
-                row = row + rowDir;
-            } else {
-                if (board.getPiece(newPos).getTeamColor() != color) {
-                    moves.add(new ChessMove(position, newPos, null));
-                    break;
-                }
-                break;
-            }
-        }
-        return moves;
-    }
 }
