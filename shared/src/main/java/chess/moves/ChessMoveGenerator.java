@@ -83,8 +83,8 @@ public class ChessMoveGenerator {
             white = false;
         }
         ChessPosition newPos = new ChessPosition(row, startCol);
-        ChessPosition Left = new ChessPosition(row, startCol - 1 );
-        ChessPosition Right = new ChessPosition(row, startCol + 1);
+        ChessPosition left = new ChessPosition(row, startCol - 1 );
+        ChessPosition right = new ChessPosition(row, startCol + 1);
         boolean doubleMove = (startRow == 2 && white) || (startRow == 7 && !white);
         boolean promotion = (startRow == 7 && white) || (startRow == 2 && !white);
         if (board.getPiece(newPos) == null) {
@@ -105,28 +105,28 @@ public class ChessMoveGenerator {
                 moves.add(new ChessMove(position, newPos, null));
             }
         }
-        if (startCol > 1 && board.getPiece(Left) != null && board.getPiece(Left).getTeamColor() != color) {
+        if (startCol > 1 && board.getPiece(left) != null && board.getPiece(left).getTeamColor() != color) {
             if (promotion) {
                 // Handling Promotion
                 for (ChessPiece.PieceType piece : ChessPiece.PieceType.values()) {
                     if (piece != ChessPiece.PieceType.PAWN && piece != ChessPiece.PieceType.KING) {
-                        moves.add(new ChessMove(position, Left, piece));
+                        moves.add(new ChessMove(position, left, piece));
                     }
                 }
             } else {
-                moves.add(new ChessMove(position, Left, null));
+                moves.add(new ChessMove(position, left, null));
             }
         }
-        if (startCol < 8 && board.getPiece(Right) != null && board.getPiece(Right).getTeamColor() != color) {
+        if (startCol < 8 && board.getPiece(right) != null && board.getPiece(right).getTeamColor() != color) {
             if (promotion) {
                 // Handling Promotion
                 for (ChessPiece.PieceType piece : ChessPiece.PieceType.values()) {
                     if (piece != ChessPiece.PieceType.PAWN && piece != ChessPiece.PieceType.KING) {
-                        moves.add(new ChessMove(position, Right, piece));
+                        moves.add(new ChessMove(position, right, piece));
                     }
                 }
             } else {
-                moves.add(new ChessMove(position, Right, null));
+                moves.add(new ChessMove(position, right, null));
             }
         }
 
