@@ -2,6 +2,8 @@ package server;
 
 import io.javalin.*;
 import io.javalin.http.Context;
+import com.google.gson.Gson;
+import model.UserData;
 
 public class Server {
 
@@ -25,6 +27,7 @@ public class Server {
     }
 
     private void registerUser(Context ctx) {
+        UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
 
     }
 }
