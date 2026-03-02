@@ -1,10 +1,11 @@
 package server;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import io.javalin.*;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
-import model.UserData;
+import model.*;
 import service.Service;
 
 public class Server {
@@ -32,8 +33,9 @@ public class Server {
         javalin.stop();
     }
 
-    private void registerUser(Context ctx) {
+    private void registerUser(Context ctx) throws DataAccessException {
         UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
-
+        AuthData authData = service.register(userData);
+        ctx.result(new Gson().toJson(authData));
     }
 }

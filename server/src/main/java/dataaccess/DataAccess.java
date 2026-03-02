@@ -1,7 +1,10 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 
 public interface DataAccess {
-    UserData register(UserData userData) throws DataAccessException;
+    UserData getUser(UserData userData);
+    void createUser(UserData userData);
+    void createAuth(AuthData authData);
 }
