@@ -18,10 +18,14 @@ public class RegisterService {
             throw new AlreadyTakenException();
         }
         userDAO.createUser(userData);
-        String authToken = UUID.randomUUID().toString();
+        String authToken = generateAuthToken();
         AuthData authData = new AuthData(userData.username(), authToken);
         authDAO.createAuth(authData);
         return authData;
+    }
+
+    private String generateAuthToken() {
+        return UUID.randomUUID().toString();
     }
 
 }

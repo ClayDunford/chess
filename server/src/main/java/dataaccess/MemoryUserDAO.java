@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class MemoryUserDAO implements UserDAO{
     final private Map<String, UserData> UserDatabase = new HashMap<>();
-    final private Map<String, AuthData> AuthDatabase = new HashMap<>();
     public UserData getUser(UserData userData){
         String username = userData.username();
         if (UserDatabase.get(username) != null) {
@@ -21,6 +20,10 @@ public class MemoryUserDAO implements UserDAO{
     public void createUser(UserData userData) {
         String username = userData.username();
         UserDatabase.put(username, userData);
+    }
+
+    public void clearUser() {
+       UserDatabase.clear();
     }
 
 }

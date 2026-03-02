@@ -12,4 +12,8 @@ public class MemoryAuthDAO implements AuthDAO{
         AuthDatabase.put(authToken, authData);
     }
 
+    public void clearAuth() {
+        AuthDatabase.clear();
+    }
+
 }

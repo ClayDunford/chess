@@ -6,4 +6,5 @@ import model.UserData;
 public interface UserDAO {
     UserData getUser(UserData userData);
     void createUser(UserData userData);
+    void clearUser();
 }

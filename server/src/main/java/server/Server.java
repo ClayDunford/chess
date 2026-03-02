@@ -25,11 +25,15 @@ public class Server {
 
         // Services
         RegisterService registerService = new RegisterService(userDAO, authDAO);
+        ClearService clearService= new ClearService(userDAO, authDAO, gameDAO);
 
         // Handlers
         RegisterHandler registerHandler = new RegisterHandler(registerService);
+        ClearHandler clearHandler = new ClearHandler(clearService);
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                .post("/user", registerHandler::register);
+                .post("/user", registerHandler::register)
+                .delete("/db", clearHandler::clear);
 
         // Register your endpoints and exception handlers here.
 
