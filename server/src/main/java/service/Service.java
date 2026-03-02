@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.AlreadyTakenException;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
@@ -17,11 +18,11 @@ public class Service {
 
     public AuthData register(UserData userData) throws DataAccessException {
         if (dataAccess.getUser(userData) != null) {
-            throw new DataAccessException("Error: Username already taken");
+            throw new AlreadyTakenException();
         }
         dataAccess.createUser(userData);
         String authToken = UUID.randomUUID().toString();
-        AuthData authData = new AuthData(authToken, userData.username());
+        AuthData authData = new AuthData(userData.username(), authToken);
         dataAccess.createAuth(authData);
         return authData;
     }

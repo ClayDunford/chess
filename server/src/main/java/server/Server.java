@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.AlreadyTakenException;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import io.javalin.*;
@@ -35,7 +36,12 @@ public class Server {
 
     private void registerUser(Context ctx) throws DataAccessException {
         UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
-        AuthData authData = service.register(userData);
-        ctx.result(new Gson().toJson(authData));
+        try {
+            AuthData authData = service.register(userData);
+            ctx.result(new Gson().toJson(authData));
+        } catch (AlreadyTakenException e) {
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ctx.status(403).result(new Gson().toJson(message));
+        }
     }
 }
