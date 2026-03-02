@@ -7,19 +7,21 @@ import io.javalin.*;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
 import model.*;
-import service.Service;
+import service.*;
 
 public class Server {
 
     private final Javalin javalin;
     private final Service service;
+    private final RegisterService registerService;
 
     public Server() { this(new Service(new MemoryDataAccess())); }
     public Server(Service service) {
         this.service = service;
+        this.registerService =
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                .post("/user", this::registerUser);
+                .post("/user", new RegisterHandler().register);
 
         // Register your endpoints and exception handlers here.
 
