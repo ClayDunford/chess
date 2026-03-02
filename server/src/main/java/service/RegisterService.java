@@ -1,5 +1,27 @@
 package service;
 
+import dataaccess.*;
+import model.AuthData;
+import model.UserData;
+
+import java.util.UUID;
+
 public class RegisterService {
-    public RegisterService() {}
+    private final UserDAO userDAO;
+    private final AuthDAO authDAO;
+    public RegisterService(UserDAO userDAO, AuthDAO authDAO) {
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
+    public AuthData register(UserData userData) throws AlreadyTakenException {
+        if (userDAO.getUser(userData) != null) {
+            throw new AlreadyTakenException();
+        }
+        userDAO.createUser(userData);
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(userData.username(), authToken);
+        authDAO.createAuth(authData);
+        return authData;
+    }
+
 }

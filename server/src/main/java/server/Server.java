@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.AlreadyTakenException;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
+import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import com.google.gson.Gson;
@@ -12,16 +10,26 @@ import service.*;
 public class Server {
 
     private final Javalin javalin;
-    private final Service service;
-    private final RegisterService registerService;
+    private final AuthDAO authDAO;
+    private final UserDAO userDAO;
+    private final GameDAO gameDAO;
 
-    public Server() { this(new Service(new MemoryDataAccess())); }
-    public Server(Service service) {
-        this.service = service;
-        this.registerService =
+    public Server() {
+        this(new MemoryAuthDAO(), new MemoryUserDAO(), new MemoryGameDAO());
+    }
+    public Server(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO) {
+        // DAOS
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
+        this.gameDAO = gameDAO;
 
+        // Services
+        RegisterService registerService = new RegisterService(userDAO, authDAO);
+
+        // Handlers
+        RegisterHandler registerHandler = new RegisterHandler(registerService);
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                .post("/user", new RegisterHandler().register);
+                .post("/user", registerHandler::register);
 
         // Register your endpoints and exception handlers here.
 
@@ -36,14 +44,4 @@ public class Server {
         javalin.stop();
     }
 
-    private void registerUser(Context ctx) throws DataAccessException {
-        UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
-        try {
-            AuthData authData = service.register(userData);
-            ctx.result(new Gson().toJson(authData));
-        } catch (AlreadyTakenException e) {
-            ErrorMessage message = new ErrorMessage(e.getMessage());
-            ctx.status(403).result(new Gson().toJson(message));
-        }
-    }
 }
