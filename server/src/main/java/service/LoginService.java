@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AlreadyTakenException;
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 
@@ -17,11 +14,14 @@ public class LoginService {
         this.authDAO = authDAO;
     }
 
-    public AuthData login(UserData userData) throws DataAccessException {
+    public AuthData login(UserData userData) throws BadRequestException, NoUsernameInDatabaseException, MistmatchedPasswordsException{
+        if (!userData.validate()) {
+            throw new BadRequestException();
+        }
         if (userDAO.getUser(userData) == null){
-            throw new DataAccessException("No username in database");
+            throw new NoUsernameInDatabaseException();
         } if (!userData.password().equals(userDAO.getPassword(userData))) {
-            throw new DataAccessException("Passwords don't match");
+            throw new MistmatchedPasswordsException();
         }
         String authToken = generateAuthToken();
         AuthData authData = new AuthData(userData.username(), authToken);

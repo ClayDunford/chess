@@ -1,6 +1,7 @@
 package server;
 import com.google.gson.Gson;
 import dataaccess.AlreadyTakenException;
+import dataaccess.BadRequestException;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.ErrorMessage;
@@ -21,6 +22,9 @@ public class RegisterHandler {
         } catch (AlreadyTakenException e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(403).result(new Gson().toJson(message));
+        } catch (BadRequestException e) {
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ctx.status(400).result(new Gson().toJson(message));
         }
     }
 }

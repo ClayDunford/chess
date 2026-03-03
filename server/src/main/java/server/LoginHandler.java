@@ -1,7 +1,11 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import dataaccess.BadRequestException;
 import dataaccess.DataAccessException;
+import dataaccess.MistmatchedPasswordsException;
+import dataaccess.NoUsernameInDatabaseException;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.ErrorMessage;
@@ -15,12 +19,17 @@ public class LoginHandler {
 
     public void login (Context ctx) {
         UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
+        System.out.println(userData.username());
+        System.out.println(userData.password());
         try {
-            AuthData authData =loginService.login(userData);
+            AuthData authData = loginService.login(userData);
             ctx.result(new Gson().toJson(authData));
-        } catch (DataAccessException e) {
+        } catch (BadRequestException e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
-            ctx.status(403).result(new Gson().toJson(message));
+            ctx.status(400).result(new Gson().toJson(message));
+        } catch (MistmatchedPasswordsException | NoUsernameInDatabaseException e) {
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ctx.status(401).result(new Gson().toJson(message));
         }
     }
 }

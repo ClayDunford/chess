@@ -13,7 +13,10 @@ public class RegisterService {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }
-    public AuthData register(UserData userData) throws AlreadyTakenException {
+    public AuthData register(UserData userData) throws BadRequestException, AlreadyTakenException {
+        if (!userData.validate()) {
+            throw new BadRequestException();
+        }
         if (userDAO.getUser(userData) != null) {
             throw new AlreadyTakenException();
         }
