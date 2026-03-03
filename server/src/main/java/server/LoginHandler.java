@@ -19,8 +19,6 @@ public class LoginHandler {
 
     public void login (Context ctx) {
         UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
-        System.out.println(userData.username());
-        System.out.println(userData.password());
         try {
             AuthData authData = loginService.login(userData);
             ctx.result(new Gson().toJson(authData));

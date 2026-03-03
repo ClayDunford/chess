@@ -7,4 +7,13 @@ public class MemoryGameDAO implements GameDAO{
     public void clearGame() {
         GameDatabase.clear();
     }
+
+    public int getSize() {
+        return GameDatabase.size();
+    }
+
+    public void createGame(GameData gameData) {
+        int gameID = gameData.gameID();
+        GameDatabase.put(gameID, gameData);
+    }
 }
