@@ -3,27 +3,27 @@ import java.util.*;
 import model.GameData;
 
 public class MemoryGameDAO implements GameDAO{
-    final private Map<Integer, GameData> GameDatabase = new HashMap<>();
+    final private Map<Integer, GameData> gameDatabase = new HashMap<>();
     public void clearGame() {
-        GameDatabase.clear();
+        gameDatabase.clear();
     }
 
     public int getSize() {
-        return GameDatabase.size();
+        return gameDatabase.size();
     }
 
     public void createGame(GameData gameData) {
         int gameID = gameData.gameID();
-        GameDatabase.put(gameID, gameData);
+        gameDatabase.put(gameID, gameData);
     }
 
     public List<GameData> listGames() {
-        return new ArrayList<>(GameDatabase.values());
+        return new ArrayList<>(gameDatabase.values());
     }
 
     public GameData getGame(int gameID) {
-        if (GameDatabase.get(gameID) != null) {
-            return GameDatabase.get(gameID);
+        if (gameDatabase.get(gameID) != null) {
+            return gameDatabase.get(gameID);
         }
         return null;
     }

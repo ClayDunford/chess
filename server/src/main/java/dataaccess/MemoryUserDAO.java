@@ -1,34 +1,33 @@
 package dataaccess;
 
-import model.AuthData;
 import model.UserData;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryUserDAO implements UserDAO{
-    final private Map<String, UserData> UserDatabase = new HashMap<>();
+    final private Map<String, UserData> userDatabase = new HashMap<>();
     public UserData getUser(UserData userData){
         String username = userData.username();
-        if (UserDatabase.get(username) != null) {
-            return UserDatabase.get(username);
+        if (userDatabase.get(username) != null) {
+            return userDatabase.get(username);
         }
         return null;
 
     }
 
     public String getPassword(UserData userData) {
-        UserData curUser = UserDatabase.get(userData.username());
+        UserData curUser = userDatabase.get(userData.username());
         return curUser.password();
     }
 
     public void createUser(UserData userData) {
         String username = userData.username();
-        UserDatabase.put(username, userData);
+        userDatabase.put(username, userData);
     }
 
     public void clearUser() {
-       UserDatabase.clear();
+       userDatabase.clear();
     }
 
 }

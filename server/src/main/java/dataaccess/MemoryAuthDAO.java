@@ -6,24 +6,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryAuthDAO implements AuthDAO{
-    final private Map<String, AuthData> AuthDatabase = new HashMap<>();
+    final private Map<String, AuthData> authDatabase = new HashMap<>();
     public void createAuth(AuthData authData) {
         String authToken = authData.authToken();
-        AuthDatabase.put(authToken, authData);
+        authDatabase.put(authToken, authData);
     }
 
     public void clearAuth() {
-        AuthDatabase.clear();
+        authDatabase.clear();
     }
 
     public AuthData getAuth(String authToken) {
-        if (AuthDatabase.get(authToken) != null) {
-            return AuthDatabase.get(authToken);
+        if (authDatabase.get(authToken) != null) {
+            return authDatabase.get(authToken);
         }
         return null;
     }
 
     public void deleteAuth(String authToken) {
-        AuthDatabase.remove(authToken);
+        authDatabase.remove(authToken);
     }
 }
