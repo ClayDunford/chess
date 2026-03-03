@@ -4,7 +4,7 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.BadRequestException;
 import dataaccess.GameDAO;
-import dataaccess.UnauthorizedRequest;
+import dataaccess.UnauthorizedRequestException;
 import model.*;
 import server.requests.CreateGameRequest;
 
@@ -17,12 +17,12 @@ public class CreateGameService {
         this.gameDAO = gameDAO;
     }
 
-    public GameData createGame(String authToken, CreateGameRequest createGameRequest) {
+    public GameData createGame(String authToken, CreateGameRequest createGameRequest) throws BadRequestException, UnauthorizedRequestException {
         if (!createGameRequest.validate()) {
             throw new BadRequestException();
         }
         if (authDAO.getAuth(authToken) == null) {
-            throw new UnauthorizedRequest();
+            throw new UnauthorizedRequestException();
         }
         String gameName = createGameRequest.gameName();
         int gameID = gameDAO.getSize() + 1;

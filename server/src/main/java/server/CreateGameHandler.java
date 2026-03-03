@@ -2,8 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.BadRequestException;
-import dataaccess.GameDAO;
-import dataaccess.UnauthorizedRequest;
+import dataaccess.UnauthorizedRequestException;
 import io.javalin.http.Context;
 import model.*;
 import server.requests.CreateGameRequest;
@@ -24,7 +23,7 @@ public class CreateGameHandler {
             GameData gameData = createGameService.createGame(authToken, createGameRequest);
             CreateGameResult createGameResult = new CreateGameResult(gameData.gameID());
             ctx.result(new Gson().toJson(createGameResult));
-        } catch (UnauthorizedRequest e) {
+        } catch (UnauthorizedRequestException e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(401).result(new Gson().toJson(message));
         } catch (BadRequestException e) {
