@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import dataaccess.exceptions.AlreadyTakenException;
 import dataaccess.exceptions.BadRequestException;
+import dataaccess.exceptions.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
@@ -22,7 +23,11 @@ public class RegisterService {
         if (userDAO.getUser(userData) != null) {
             throw new AlreadyTakenException();
         }
-        userDAO.createUser(userData);
+        try {
+            userDAO.createUser(userData);
+        } catch (DataAccessException e) {
+            throw new AlreadyTakenException();
+        }
         String authToken = generateAuthToken();
         AuthData authData = new AuthData(userData.username(), authToken);
         authDAO.createAuth(authData);
