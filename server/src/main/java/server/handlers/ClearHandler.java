@@ -1,10 +1,5 @@
-package server;
-import com.google.gson.Gson;
-import dataaccess.AlreadyTakenException;
+package server.handlers;
 import io.javalin.http.Context;
-import model.AuthData;
-import model.ErrorMessage;
-import model.UserData;
 
 import service.ClearService;
 

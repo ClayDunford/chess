@@ -1,6 +1,9 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.exceptions.AlreadyTakenException;
+import dataaccess.exceptions.BadRequestException;
+import dataaccess.exceptions.UnauthorizedRequestException;
 import model.GameData;
 import server.requests.JoinGameRequest;
 

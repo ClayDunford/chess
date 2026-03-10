@@ -1,4 +1,4 @@
-package dataaccess;
+package dataaccess.exceptions;
 
 public class NoUsernameInDatabaseException extends Exception {
     public NoUsernameInDatabaseException() {

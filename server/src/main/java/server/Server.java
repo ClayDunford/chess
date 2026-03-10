@@ -2,9 +2,7 @@ package server;
 
 import dataaccess.*;
 import io.javalin.*;
-import io.javalin.http.Context;
-import com.google.gson.Gson;
-import model.*;
+import server.handlers.*;
 import service.*;
 
 public class Server {
@@ -15,7 +13,7 @@ public class Server {
     private final GameDAO gameDAO;
 
     public Server() {
-        this(new MemoryAuthDAO(), new MemoryUserDAO(), new MemoryGameDAO());
+        this(new MemoryAuthDAO(), new SQLUserDAO(), new MemoryGameDAO());
     }
     public Server(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO) {
         // DAOS

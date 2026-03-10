@@ -1,7 +1,7 @@
-package server;
+package server.handlers;
 import com.google.gson.Gson;
-import dataaccess.AlreadyTakenException;
-import dataaccess.BadRequestException;
+import dataaccess.exceptions.AlreadyTakenException;
+import dataaccess.exceptions.BadRequestException;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.ErrorMessage;

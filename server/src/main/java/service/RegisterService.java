@@ -1,6 +1,8 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.exceptions.AlreadyTakenException;
+import dataaccess.exceptions.BadRequestException;
 import model.AuthData;
 import model.UserData;
 

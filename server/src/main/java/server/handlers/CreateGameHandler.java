@@ -1,8 +1,8 @@
-package server;
+package server.handlers;
 
 import com.google.gson.Gson;
-import dataaccess.BadRequestException;
-import dataaccess.UnauthorizedRequestException;
+import dataaccess.exceptions.BadRequestException;
+import dataaccess.exceptions.UnauthorizedRequestException;
 import io.javalin.http.Context;
 import model.*;
 import server.requests.CreateGameRequest;
