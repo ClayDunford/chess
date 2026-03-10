@@ -3,6 +3,7 @@ package dataaccess;
 import com.google.gson.Gson;
 import dataaccess.exceptions.DataAccessException;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 
@@ -38,12 +39,23 @@ public class SQLUserDAO  implements UserDAO{
         return userData;
     }
 
-    public String getPassword(UserData userData) {
-        return "egg";
+    public boolean checkPassword(UserData userData) {
+        UserData databaseUser = getUser(userData);
+        String clearPassword = userData.password();
+        String databasePassword = databaseUser.password();
+        return BCrypt.checkpw(clearPassword, databasePassword);
     }
 
-    public void createUser(UserData userData) {
+    public String hashPassword(UserData userData) {
+        String clearPassword = userData.password();
+        return BCrypt.hashpw(clearPassword, BCrypt.gensalt());
+    }
 
+    public void createUser(UserData userData) throws DataAccessException {
+        String statement = "INSERT INTO user (user, userdata) VALUES (?,?)";
+        UserData hashedUser = new UserData(userData.username(), hashPassword(userData), userData.email());
+        String rawUserData = new Gson().toJson(hashedUser);
+        executeUpdate(statement, hashedUser.username(), hashedUser.password(), rawUserData);
     }
 
     public void clearUser() {

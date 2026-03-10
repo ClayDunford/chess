@@ -16,9 +16,9 @@ public class MemoryUserDAO implements UserDAO{
 
     }
 
-    public String getPassword(UserData userData) {
+    public boolean checkPassword(UserData userData) {
         UserData curUser = userDatabase.get(userData.username());
-        return curUser.password();
+        return curUser.password().equals(userData.password());
     }
 
     public void createUser(UserData userData) {

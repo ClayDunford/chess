@@ -23,7 +23,7 @@ public class LoginService {
         }
         if (userDAO.getUser(userData) == null){
             throw new NoUsernameInDatabaseException();
-        } if (!userData.password().equals(userDAO.getPassword(userData))) {
+        } if (!(userDAO.checkPassword(userData))) {
             throw new MistmatchedPasswordsException();
         }
         String authToken = generateAuthToken();
