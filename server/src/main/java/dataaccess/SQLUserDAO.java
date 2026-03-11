@@ -39,7 +39,7 @@ public class SQLUserDAO  implements UserDAO{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return userData;
+        return null;
     }
 
     public boolean checkPassword(UserData userData) throws DataAccessException{
@@ -51,7 +51,8 @@ public class SQLUserDAO  implements UserDAO{
 
     private String hashPassword(UserData userData) {
         String clearPassword = userData.password();
-        return BCrypt.hashpw(clearPassword, BCrypt.gensalt());
+        String hashedPassword = BCrypt.hashpw(clearPassword, BCrypt.gensalt());
+        return hashedPassword;
     }
 
     public void createUser(UserData userData) throws DataAccessException {

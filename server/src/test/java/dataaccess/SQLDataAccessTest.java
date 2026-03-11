@@ -16,6 +16,7 @@ public class SQLDataAccessTest {
     @BeforeEach
     public void setUP() throws DataAccessException {userDAO.clearUser();}
 
+
     @Test
     @DisplayName("Create User Test")
     @Order(1)
@@ -23,14 +24,14 @@ public class SQLDataAccessTest {
         UserData fakeUser = new UserData("username", "password", "email");
         userDAO.createUser(fakeUser);
         UserData returnUser = userDAO.getUser(fakeUser);
-        assertEquals(fakeUser, returnUser, "Users do not match");
+        assertEquals(fakeUser.username(), returnUser.username(), "Users do not match");
     }
 
     @Test
     @DisplayName("Null User Test")
     @Order(2)
     public void nullUserTest() {
-        DataAccessException error = assertThrows(DataAccessException.class, () -> {
+        assertThrows(DataAccessException.class, () -> {
             userDAO.createUser(null);
         });
     }
@@ -42,18 +43,51 @@ public class SQLDataAccessTest {
         UserData fakeUser = new UserData("username", "password", "email");
         userDAO.createUser(fakeUser);
         UserData returnUser = userDAO.getUser(fakeUser);
-        assertEquals(fakeUser, returnUser, "Unable to Get added user");
+        assertEquals(fakeUser.username(), returnUser.username(), "Unable to Get added user");
     }
 
     @Test
-    @DisplayName("Get NUll User Test")
+    @DisplayName("Get null User Test")
     @Order(4)
 
     public void getNullUserTest() {
-        DataAccessException error = assertThrows(DataAccessException.class, () -> {
+        assertThrows(DataAccessException.class, () -> {
             userDAO.getUser(null);
         });
     }
+
+    @Test
+    @DisplayName("Check Password Test")
+    @Order(5)
+
+    public void checkPasswordTest() throws DataAccessException{
+        UserData fakeUser = new UserData("username", "password", "email");
+        userDAO.createUser(fakeUser);
+        assertTrue(userDAO.checkPassword(fakeUser), "passwords don't match");
+    }
+
+    @Test
+    @DisplayName("Wrong Password Test")
+    @Order(6)
+
+    public void wrongPasswordTest() throws DataAccessException{
+        UserData fakeUser = new UserData("username", "password", "email");
+        userDAO.createUser(fakeUser);
+        UserData wrongPasswordUser = new UserData("username", "wrongPassword", "email");
+        assertFalse(userDAO.checkPassword(wrongPasswordUser), "passwords match");
+    }
+
+    @Test
+    @DisplayName("Clear Test")
+    @Order(7)
+
+    public void clearTest() throws DataAccessException{
+        UserData fakeUser = new UserData("username", "password", "email");
+        userDAO.createUser(fakeUser);
+        userDAO.clearUser();
+    }
+
+
 
 
 

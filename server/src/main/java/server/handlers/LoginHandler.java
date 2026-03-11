@@ -21,10 +21,7 @@ public class LoginHandler {
         try {
             AuthData authData = loginService.login(userData);
             ctx.result(new Gson().toJson(authData));
-        } catch (BadRequestException e) {
-            ErrorMessage message = new ErrorMessage(e.getMessage());
-            ctx.status(400).result(new Gson().toJson(message));
-        } catch (DataAccessException e) {
+        } catch (BadRequestException | DataAccessException e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(400).result(new Gson().toJson(message));
         } catch (MistmatchedPasswordsException | NoUsernameInDatabaseException e) {
