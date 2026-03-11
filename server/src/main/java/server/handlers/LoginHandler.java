@@ -2,6 +2,7 @@ package server.handlers;
 
 import com.google.gson.Gson;
 import dataaccess.exceptions.BadRequestException;
+import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.MistmatchedPasswordsException;
 import dataaccess.exceptions.NoUsernameInDatabaseException;
 import io.javalin.http.Context;
@@ -21,6 +22,9 @@ public class LoginHandler {
             AuthData authData = loginService.login(userData);
             ctx.result(new Gson().toJson(authData));
         } catch (BadRequestException e) {
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ctx.status(400).result(new Gson().toJson(message));
+        } catch (DataAccessException e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(400).result(new Gson().toJson(message));
         } catch (MistmatchedPasswordsException | NoUsernameInDatabaseException e) {

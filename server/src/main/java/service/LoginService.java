@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import dataaccess.exceptions.BadRequestException;
+import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.MistmatchedPasswordsException;
 import dataaccess.exceptions.NoUsernameInDatabaseException;
 import model.AuthData;
@@ -17,7 +18,7 @@ public class LoginService {
         this.authDAO = authDAO;
     }
 
-    public AuthData login(UserData userData) throws BadRequestException, NoUsernameInDatabaseException, MistmatchedPasswordsException {
+    public AuthData login(UserData userData) throws BadRequestException, NoUsernameInDatabaseException, MistmatchedPasswordsException, DataAccessException {
         if (!userData.validate()) {
             throw new BadRequestException();
         }

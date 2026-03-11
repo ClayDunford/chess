@@ -16,18 +16,16 @@ public class RegisterService {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }
-    public AuthData register(UserData userData) throws BadRequestException, AlreadyTakenException {
+    public AuthData register(UserData userData) throws BadRequestException, AlreadyTakenException, DataAccessException {
         if (!userData.validate()) {
             throw new BadRequestException();
         }
         if (userDAO.getUser(userData) != null) {
             throw new AlreadyTakenException();
         }
-        try {
-            userDAO.createUser(userData);
-        } catch (DataAccessException e) {
-            throw new AlreadyTakenException();
-        }
+
+        userDAO.createUser(userData);
+
         String authToken = generateAuthToken();
         AuthData authData = new AuthData(userData.username(), authToken);
         authDAO.createAuth(authData);

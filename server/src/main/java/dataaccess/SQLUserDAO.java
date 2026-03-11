@@ -1,6 +1,7 @@
 package dataaccess;
 
 import com.google.gson.Gson;
+import dataaccess.exceptions.AlreadyTakenException;
 import dataaccess.exceptions.DataAccessException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
@@ -19,9 +20,13 @@ public class SQLUserDAO  implements UserDAO{
         }
     }
 
-    public UserData getUser(UserData userData) {
-        String username = userData.username();
+    public UserData getUser(UserData userData) throws DataAccessException{
+
         try (Connection conn = DatabaseManager.getConnection()) {
+            if (userData == null) {
+                throw new DataAccessException("Userdata is null");
+            }
+            String username = userData.username();
             var statement = "SELECT username, userdata FROM user WHERE username=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
@@ -33,33 +38,34 @@ public class SQLUserDAO  implements UserDAO{
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
         return userData;
     }
 
-    public boolean checkPassword(UserData userData) {
+    public boolean checkPassword(UserData userData) throws DataAccessException{
         UserData databaseUser = getUser(userData);
         String clearPassword = userData.password();
         String databasePassword = databaseUser.password();
         return BCrypt.checkpw(clearPassword, databasePassword);
     }
 
-    public String hashPassword(UserData userData) {
+    private String hashPassword(UserData userData) {
         String clearPassword = userData.password();
         return BCrypt.hashpw(clearPassword, BCrypt.gensalt());
     }
 
     public void createUser(UserData userData) throws DataAccessException {
-        String statement = "INSERT INTO user (user, userdata) VALUES (?,?)";
+        if (userData == null) {
+            throw new DataAccessException("Invalid userdata object");
+        }
+        String statement = "INSERT INTO user (username, userdata) VALUES (?,?)";
         UserData hashedUser = new UserData(userData.username(), hashPassword(userData), userData.email());
-        String rawUserData = new Gson().toJson(hashedUser);
-        executeUpdate(statement, hashedUser.username(), hashedUser.password(), rawUserData);
+        executeUpdate(statement, hashedUser.username(), hashedUser);
     }
 
-    public void clearUser() {
-
+    public void clearUser() throws DataAccessException {
+        String statement = "TRUNCATE user";
+        executeUpdate(statement);
     }
 
     private UserData readUser(ResultSet rs) throws SQLException {

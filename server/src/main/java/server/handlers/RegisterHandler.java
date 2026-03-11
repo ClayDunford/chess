@@ -2,6 +2,7 @@ package server.handlers;
 import com.google.gson.Gson;
 import dataaccess.exceptions.AlreadyTakenException;
 import dataaccess.exceptions.BadRequestException;
+import dataaccess.exceptions.DataAccessException;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.ErrorMessage;
@@ -23,6 +24,9 @@ public class RegisterHandler {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(403).result(new Gson().toJson(message));
         } catch (BadRequestException e) {
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            ctx.status(400).result(new Gson().toJson(message));
+        } catch (DataAccessException  e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(400).result(new Gson().toJson(message));
         }
