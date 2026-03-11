@@ -13,7 +13,7 @@ public class Server {
     private final GameDAO gameDAO;
 
     public Server() {
-        this(new MemoryAuthDAO(), new SQLUserDAO(), new MemoryGameDAO());
+        this(new SQLAuthDAO(), new SQLUserDAO(), new MemoryGameDAO());
     }
     public Server(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO) {
         // DAOS

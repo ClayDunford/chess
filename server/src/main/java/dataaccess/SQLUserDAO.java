@@ -51,8 +51,7 @@ public class SQLUserDAO  implements UserDAO{
 
     private String hashPassword(UserData userData) {
         String clearPassword = userData.password();
-        String hashedPassword = BCrypt.hashpw(clearPassword, BCrypt.gensalt());
-        return hashedPassword;
+        return BCrypt.hashpw(clearPassword, BCrypt.gensalt());
     }
 
     public void createUser(UserData userData) throws DataAccessException {

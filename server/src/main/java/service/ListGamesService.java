@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
+import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedRequestException;
 import model.GameData;
 
@@ -17,7 +18,7 @@ public class ListGamesService {
         this.gameDAO = gameDAO;
     }
 
-    public List<GameData> listGames(String authToken) {
+    public List<GameData> listGames(String authToken) throws DataAccessException {
         if (authDAO.getAuth(authToken) == null) {
             throw new UnauthorizedRequestException();
         }

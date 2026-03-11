@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import dataaccess.exceptions.AlreadyTakenException;
 import dataaccess.exceptions.BadRequestException;
+import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedRequestException;
 import model.GameData;
 import server.requests.JoinGameRequest;
@@ -16,7 +17,7 @@ public class JoinGameService {
         this.gameDAO = gameDAO;
     }
 
-    public void joinGame(String authToken, JoinGameRequest joinGameRequest) throws AlreadyTakenException {
+    public void joinGame(String authToken, JoinGameRequest joinGameRequest) throws AlreadyTakenException, DataAccessException {
         if (!joinGameRequest.validate()) {
             throw new BadRequestException();
         }
