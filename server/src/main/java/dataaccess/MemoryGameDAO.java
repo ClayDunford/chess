@@ -4,8 +4,9 @@ import model.GameData;
 
 public class MemoryGameDAO implements GameDAO{
     final private Map<Integer, GameData> gameDatabase = new HashMap<>();
-    public void clearGame() {
+    public int clearGame() {
         gameDatabase.clear();
+        return 0;
     }
 
     public int getSize() {
