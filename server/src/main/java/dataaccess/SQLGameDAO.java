@@ -132,7 +132,7 @@ public class SQLGameDAO implements GameDAO{
         }
     }
 
-    private final String[] createStatements = {
+    private final String[] createGameStatements = {
             """
             CREATE TABLE IF NOT EXISTS game (
                 `gameID` INT NOT NULL,
@@ -146,7 +146,7 @@ public class SQLGameDAO implements GameDAO{
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
+            for (String statement : createGameStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }

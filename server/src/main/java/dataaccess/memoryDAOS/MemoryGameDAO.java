@@ -1,8 +1,10 @@
-package dataaccess;
+package dataaccess.memoryDAOS;
 import java.util.*;
+
+import dataaccess.GameDAO;
 import model.GameData;
 
-public class MemoryGameDAO implements GameDAO{
+public class MemoryGameDAO implements GameDAO {
     final private Map<Integer, GameData> gameDatabase = new HashMap<>();
     public int clearGame() {
         gameDatabase.clear();

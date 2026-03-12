@@ -10,7 +10,7 @@ import java.sql.*;
 
 import static java.sql.Types.NULL;
 
-public class SQLUserDAO  implements UserDAO{
+public class SQLUserDAO  implements UserDAO {
 
     public SQLUserDAO() {
         try {
@@ -113,7 +113,7 @@ public class SQLUserDAO  implements UserDAO{
         }
     }
 
-    private final String[] createStatements = {
+    private final String[] createUserStatements = {
             """
             CREATE TABLE IF NOT EXISTS user (
                 `username` varchar(256) NOT NULL,
@@ -126,7 +126,7 @@ public class SQLUserDAO  implements UserDAO{
     private void configureDatabase() throws DataAccessException{
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
+            for (String statement : createUserStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
