@@ -18,7 +18,8 @@ public class LoginService {
         this.authDAO = authDAO;
     }
 
-    public AuthData login(UserData userData) throws BadRequestException, NoUsernameInDatabaseException, MistmatchedPasswordsException, DataAccessException {
+    public AuthData login(UserData userData) throws BadRequestException, NoUsernameInDatabaseException,
+            MistmatchedPasswordsException, DataAccessException {
         if (!userData.validate()) {
             throw new BadRequestException();
         }

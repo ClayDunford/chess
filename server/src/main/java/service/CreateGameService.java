@@ -18,7 +18,8 @@ public class CreateGameService {
         this.gameDAO = gameDAO;
     }
 
-    public GameData createGame(String authToken, CreateGameRequest createGameRequest) throws BadRequestException, UnauthorizedRequestException, DataAccessException {
+    public GameData createGame(String authToken, CreateGameRequest createGameRequest) throws BadRequestException,
+            UnauthorizedRequestException, DataAccessException {
         if (!createGameRequest.validate()) {
             throw new BadRequestException();
         }
