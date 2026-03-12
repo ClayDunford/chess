@@ -19,10 +19,10 @@ public class SQLAuthDataAccessTest {
     @DisplayName("Create Auth test")
     @Order(1)
     public void createAuthTest() throws DataAccessException {
-        AuthData fakeAuth = new AuthData("username", "authToken");
-        authDAO.createAuth(fakeAuth);
-        AuthData returnAuth = authDAO.getAuth(fakeAuth.authToken());
-        assertEquals(fakeAuth, returnAuth, "AuthData not the same");
+        AuthData fakeCreateAuth = new AuthData("username", "authToken");
+        authDAO.createAuth(fakeCreateAuth);
+        AuthData returnCreateAuth = authDAO.getAuth(fakeCreateAuth.authToken());
+        assertEquals(fakeCreateAuth, returnCreateAuth, "AuthData not the same");
     }
 
     @Test
@@ -38,10 +38,10 @@ public class SQLAuthDataAccessTest {
     @DisplayName("Get Auth test")
     @Order(3)
     public void getAuthTest() throws DataAccessException{
-        AuthData fakeAuth = new AuthData("username", "authToken");
-        authDAO.createAuth(fakeAuth);
-        AuthData returnAuth = authDAO.getAuth(fakeAuth.authToken());
-        assertEquals(fakeAuth, returnAuth, "AuthData not the same");
+        AuthData fakeGetAuth = new AuthData("username", "authToken");
+        authDAO.createAuth(fakeGetAuth);
+        AuthData returnGetAuth = authDAO.getAuth(fakeGetAuth.authToken());
+        assertEquals(fakeGetAuth, returnGetAuth, "AuthData not the same");
     }
 
     @Test

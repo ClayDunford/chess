@@ -3,6 +3,8 @@ package dataaccess;
 import com.google.gson.Gson;
 import dataaccess.exceptions.AlreadyTakenException;
 import dataaccess.exceptions.DataAccessException;
+import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -76,19 +78,8 @@ public class SQLUserDAO extends SQLDAO implements UserDAO {
     public int clearUser() throws DataAccessException {
         String statement = "TRUNCATE user";
         executeUpdate(statement);
-        String rowCountStatement = "SELECT COUNT(*) as rowCount FROM user";
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(rowCountStatement)) {
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt("rowCount");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return 1;
+        String userCountStatement = "SELECT COUNT(*) as rowCount FROM user";
+        return getRowNum(userCountStatement);
     }
 
     private UserData readUser(ResultSet rs) throws SQLException {
@@ -101,13 +92,9 @@ public class SQLUserDAO extends SQLDAO implements UserDAO {
             try (PreparedStatement ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case UserData p -> ps.setString(i + 1, p.toString());
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
-                    }
+                    if (param instanceof String p) {ps.setString(i + 1, p);}
+                    else if (param instanceof UserData p) {ps.setString(i +1 , p.toString());}
+                    else if (param == null) {ps.setNull(i + 1, NULL);}
                 }
                 ps.executeUpdate();
 

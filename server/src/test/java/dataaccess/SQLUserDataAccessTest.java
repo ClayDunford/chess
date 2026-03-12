@@ -20,10 +20,10 @@ public class SQLUserDataAccessTest {
     @DisplayName("Create User Test")
     @Order(1)
     public void createUserTest() throws DataAccessException {
-        UserData fakeUser = new UserData("username", "password", "email");
-        userDAO.createUser(fakeUser);
-        UserData returnUser = userDAO.getUser(fakeUser);
-        assertEquals(fakeUser.username(), returnUser.username(), "Users do not match");
+        UserData fakeCreateUser = new UserData("username", "password", "email");
+        userDAO.createUser(fakeCreateUser);
+        UserData returnCreateUser = userDAO.getUser(fakeCreateUser);
+        assertEquals(fakeCreateUser.username(), returnCreateUser.username(), "Users do not match");
     }
 
     @Test
@@ -39,10 +39,10 @@ public class SQLUserDataAccessTest {
     @DisplayName("Get User Test")
     @Order(3)
     public void getUserTest() throws DataAccessException{
-        UserData fakeUser = new UserData("username", "password", "email");
-        userDAO.createUser(fakeUser);
-        UserData returnUser = userDAO.getUser(fakeUser);
-        assertEquals(fakeUser.username(), returnUser.username(), "Unable to Get added user");
+        UserData fakeGetUser = new UserData("username", "password", "email");
+        userDAO.createUser(fakeGetUser);
+        UserData returnGetUser = userDAO.getUser(fakeGetUser);
+        assertEquals(fakeGetUser.username(), returnGetUser.username(), "Unable to Get added user");
     }
 
     @Test

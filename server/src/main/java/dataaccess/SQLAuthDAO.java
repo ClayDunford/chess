@@ -75,20 +75,8 @@ public class SQLAuthDAO  extends SQLDAO implements AuthDAO{
     public int clearAuth() throws DataAccessException{
         String statement = "TRUNCATE auth";
         executeUpdate(statement);
-
-        String rowCountStatement = "SELECT COUNT(*) as rowCount FROM auth";
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(rowCountStatement)) {
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt("rowCount");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return 1;
+        String authCountStatement = "SELECT COUNT(*) as rowCount FROM auth";
+        return getRowNum(authCountStatement);
     }
 
 
@@ -101,8 +89,7 @@ public class SQLAuthDAO  extends SQLDAO implements AuthDAO{
                         case String p -> ps.setString(i + 1, p);
                         case AuthData p -> ps.setString(i + 1, p.toString());
                         case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
+                        default -> throw new IllegalStateException("Unexpected value: " + param);
                     }
                 }
                 ps.executeUpdate();

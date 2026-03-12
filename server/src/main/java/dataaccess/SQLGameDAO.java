@@ -66,19 +66,8 @@ public class SQLGameDAO extends SQLDAO implements GameDAO{
 
 
     public int getSize() throws DataAccessException{
-        String rowCountStatement = "SELECT COUNT(*) as rowCount FROM game";
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(rowCountStatement)) {
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt("rowCount");
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return 1;
+        String gameCountStatement = "SELECT COUNT(*) as rowCount FROM game";
+        return getRowNum(gameCountStatement);
     }
 
     public List<GameData> listGames() throws DataAccessException {
@@ -114,24 +103,21 @@ public class SQLGameDAO extends SQLDAO implements GameDAO{
     }
 
 
-
+    private PreparedStatement paramChecker(PreparedStatement ps, Object... params) throws SQLException{
+        for (int i = 0; i < params.length; i++) {
+            Object param = params[i];
+            if (param instanceof Integer p) {ps.setInt(i + 1, p);}
+            else if (param instanceof GameData p) {ps.setString(i+1, p.toString());}
+            else if (param == null) {ps.setNull(i + 1, NULL);}
+        }
+        return ps;
+    }
     private String executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    Object param = params[i];
-                    switch (param) {
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case GameData p -> ps.setString(i + 1, p.toString());
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
-                    }
-                }
-                ps.executeUpdate();
-
-                ResultSet rs = ps.getGeneratedKeys();
-
+                PreparedStatement finalStatement = paramChecker(ps, params);
+                finalStatement.executeUpdate();
+                ResultSet rs = finalStatement.getGeneratedKeys();
                 if (rs.next()) {
                     return rs.getString(1);
                 }
