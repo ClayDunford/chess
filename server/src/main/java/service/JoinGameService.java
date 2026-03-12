@@ -35,11 +35,13 @@ public class JoinGameService {
             if (gameData.blackUsername() != null) {
                 throw new AlreadyTakenException();
             }
+            gameDAO.deleteGame(gameID);
             gameData = new GameData(gameID, gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
         } else {
             if (gameData.whiteUsername() != null) {
                 throw new AlreadyTakenException();
             }
+            gameDAO.deleteGame(gameID);
             gameData = new GameData(gameID, username, gameData.blackUsername(), gameData.gameName(), gameData.game());
         }
         gameDAO.createGame(gameData);

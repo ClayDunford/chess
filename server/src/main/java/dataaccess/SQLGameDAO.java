@@ -35,7 +35,7 @@ public class SQLGameDAO implements GameDAO{
 
     public GameData getGame(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            if (gameID == 0) {
+            if (gameID <= 0) {
                 throw new DataAccessException("Invalid Game ID");
             }
 
@@ -87,6 +87,14 @@ public class SQLGameDAO implements GameDAO{
             throw new RuntimeException(e);
         }
         return gameList;
+    }
+
+    public void deleteGame(int gameID) throws DataAccessException {
+        if (gameID <= 0) {
+            throw new DataAccessException("Invalid GameID");
+        }
+        String statement = "DELETE FROM game WHERE gameID = ?";
+        executeUpdate(statement, gameID);
     }
 
     public int clearGame() throws DataAccessException {

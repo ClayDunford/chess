@@ -21,12 +21,15 @@ public class LoginHandler {
         try {
             AuthData authData = loginService.login(userData);
             ctx.result(new Gson().toJson(authData));
-        } catch (BadRequestException | DataAccessException e) {
+        } catch (BadRequestException e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(400).result(new Gson().toJson(message));
         } catch (MistmatchedPasswordsException | NoUsernameInDatabaseException e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(401).result(new Gson().toJson(message));
+        } catch (DataAccessException e) {
+            ErrorMessage message = new ErrorMessage("Error: " + e.getMessage());
+            ctx.status(500).result(new Gson().toJson(message));
         }
     }
 }

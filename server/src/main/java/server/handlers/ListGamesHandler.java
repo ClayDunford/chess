@@ -27,8 +27,8 @@ public class ListGamesHandler {
             ErrorMessage message = new ErrorMessage(e.getMessage());
             ctx.status(401).result(new Gson().toJson(message));
         } catch (DataAccessException e) {
-            ErrorMessage message = new ErrorMessage(e.getMessage());
-            ctx.status(400).result(new Gson().toJson(message));
+            ErrorMessage message = new ErrorMessage("Error: " + e.getMessage());
+            ctx.status(500).result(new Gson().toJson(message));
         }
     }
 }

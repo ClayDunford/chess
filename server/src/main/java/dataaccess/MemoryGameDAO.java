@@ -17,6 +17,9 @@ public class MemoryGameDAO implements GameDAO{
         int gameID = gameData.gameID();
         gameDatabase.put(gameID, gameData);
     }
+    public void deleteGame( int gameID) {
+        gameDatabase.remove(gameID);
+    }
 
     public List<GameData> listGames() {
         return new ArrayList<>(gameDatabase.values());

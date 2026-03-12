@@ -17,8 +17,9 @@ public class ClearHandler {
             clearService.clear();
             ctx.result();
         } catch (DataAccessException e) {
-            ErrorMessage message = new ErrorMessage(e.getMessage());
-            ctx.status(400).result(new Gson().toJson(message));
+            ErrorMessage message = new ErrorMessage("Error: " + e.getMessage());
+            ctx.status(500).result(new Gson().toJson(message));
+
         }
     }
 }
