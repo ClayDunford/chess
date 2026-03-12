@@ -8,5 +8,5 @@ public interface UserDAO {
     UserData getUser(UserData userData) throws DataAccessException;
     boolean checkPassword(UserData userData) throws DataAccessException;
     void createUser(UserData userData) throws DataAccessException;
-    void clearUser() throws DataAccessException;
+    int clearUser() throws DataAccessException;
 }

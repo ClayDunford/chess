@@ -63,9 +63,22 @@ public class SQLUserDAO  implements UserDAO{
         executeUpdate(statement, hashedUser.username(), hashedUser);
     }
 
-    public void clearUser() throws DataAccessException {
+    public int clearUser() throws DataAccessException {
         String statement = "TRUNCATE user";
         executeUpdate(statement);
+        String rowCountStatement = "SELECT COUNT(*) as rowCount FROM user";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(rowCountStatement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("rowCount");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 1;
     }
 
     private UserData readUser(ResultSet rs) throws SQLException {

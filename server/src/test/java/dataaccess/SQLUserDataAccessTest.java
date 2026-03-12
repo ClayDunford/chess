@@ -13,7 +13,7 @@ public class SQLUserDataAccessTest {
     public static void startDAO() {userDAO = new SQLUserDAO();}
 
     @BeforeEach
-    public void setUP() throws DataAccessException {userDAO.clearUser();}
+    public void setUp() throws DataAccessException {userDAO.clearUser();}
 
 
     @Test
@@ -83,7 +83,8 @@ public class SQLUserDataAccessTest {
     public void clearTest() throws DataAccessException{
         UserData fakeUser = new UserData("username", "password", "email");
         userDAO.createUser(fakeUser);
-        userDAO.clearUser();
+        int rowCount = userDAO.clearUser();
+        assertEquals(0, rowCount, "Too many rows left in database");
     }
 
 
