@@ -57,10 +57,10 @@ public class SQLAuthDataAccessTest {
     @DisplayName("Delete Auth Test")
     @Order(5)
     public void deleteAuthTest() throws DataAccessException {
-        AuthData fakeAuth = new AuthData("username", "authToken");
-        authDAO.createAuth(fakeAuth);
-        authDAO.deleteAuth(fakeAuth.authToken());
-        assertNull(authDAO.getAuth(fakeAuth.authToken()));
+        AuthData fakeDeleteAuth = new AuthData("username", "authToken");
+        authDAO.createAuth(fakeDeleteAuth);
+        authDAO.deleteAuth(fakeDeleteAuth.authToken());
+        assertNull(authDAO.getAuth(fakeDeleteAuth.authToken()));
     }
 
     @Test
