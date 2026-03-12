@@ -72,6 +72,16 @@ public class SQLAuthDataAccessTest {
         });
     }
 
+    @Test
+    @DisplayName("Clear Test")
+    @Order(7)
+    public void clearTest() throws DataAccessException {
+        AuthData fakeAuth = new AuthData("username", "authToken");
+        authDAO.createAuth(fakeAuth);
+        int rowCount = authDAO.clearAuth();
+        assertEquals(0, rowCount, "Too many rows");
+    }
+
 
 
 

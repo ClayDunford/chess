@@ -63,9 +63,23 @@ public class SQLAuthDAO  implements AuthDAO{
         executeUpdate(statement, authToken);
     }
 
-    public void clearAuth() throws DataAccessException{
+    public int clearAuth() throws DataAccessException{
         String statement = "TRUNCATE auth";
         executeUpdate(statement);
+
+        String rowCountStatement = "SELECT COUNT(*) as rowCount FROM auth";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(rowCountStatement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("rowCount");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 1;
     }
 
 
