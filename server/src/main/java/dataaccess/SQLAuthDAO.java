@@ -10,10 +10,19 @@ import java.sql.*;
 
 import static java.sql.Types.NULL;
 
-public class SQLAuthDAO  implements AuthDAO{
+public class SQLAuthDAO  extends SQLDAO implements AuthDAO{
     public SQLAuthDAO() {
         try {
-            configureDatabase();
+            String[] createAuthStatements = {
+                    """
+            CREATE TABLE IF NOT EXISTS auth (
+                `authToken` varchar(256) NOT NULL,
+                `authData` TEXT NOT NULL,
+                PRIMARY KEY (`authToken`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+            };
+            configureDatabase(createAuthStatements);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -110,28 +119,5 @@ public class SQLAuthDAO  implements AuthDAO{
         }
     }
 
-    private final String[] createAuthStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS auth (
-                `authToken` varchar(256) NOT NULL,
-                `authData` TEXT NOT NULL,
-                PRIMARY KEY (`authToken`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createAuthStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }

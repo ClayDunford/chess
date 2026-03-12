@@ -11,10 +11,20 @@ import java.util.List;
 
 import static java.sql.Types.NULL;
 
-public class SQLGameDAO implements GameDAO{
+public class SQLGameDAO extends SQLDAO implements GameDAO{
     public SQLGameDAO() {
         try {
-            configureDatabase();
+            String[] createGameStatements = {
+                    """
+            CREATE TABLE IF NOT EXISTS game (
+                `gameID` INT NOT NULL,
+                `gameData` TEXT NOT NULL,
+                PRIMARY KEY (`gameID`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+            };
+
+            configureDatabase(createGameStatements);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -132,27 +142,4 @@ public class SQLGameDAO implements GameDAO{
         }
     }
 
-    private final String[] createGameStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS game (
-                `gameID` INT NOT NULL,
-                `gameData` TEXT NOT NULL,
-                PRIMARY KEY (`gameID`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createGameStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

@@ -10,11 +10,21 @@ import java.sql.*;
 
 import static java.sql.Types.NULL;
 
-public class SQLUserDAO  implements UserDAO {
+public class SQLUserDAO extends SQLDAO implements UserDAO {
 
     public SQLUserDAO() {
         try {
-            configureDatabase();
+            String[] createUserStatements = {
+                    """
+            CREATE TABLE IF NOT EXISTS user (
+                `username` varchar(256) NOT NULL,
+                `userdata` TEXT NOT NULL,
+                PRIMARY KEY (`username`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+            };
+
+            configureDatabase(createUserStatements);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -113,27 +123,5 @@ public class SQLUserDAO  implements UserDAO {
         }
     }
 
-    private final String[] createUserStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS user (
-                `username` varchar(256) NOT NULL,
-                `userdata` TEXT NOT NULL,
-                PRIMARY KEY (`username`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() throws DataAccessException{
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createUserStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
 
