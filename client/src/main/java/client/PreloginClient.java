@@ -30,7 +30,9 @@ public class PreloginClient {
     }
 
     public String login(String... params) {
+        if (params.length > 1) {
 
+        }
     }
 
     public String register(String... params) {
