@@ -1,9 +1,10 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.GameData;
 import model.requests.CreateGameRequest;
-import model.results.CreateGameResult;
+import model.requests.JoinGameRequest;
 import model.results.ListGamesResult;
 import server.ServerFacade;
 
@@ -25,6 +26,7 @@ public class PostloginClient {
 
     public String eval (String input) {
         try {
+            authToken = repl.authToken;
             String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -79,7 +81,6 @@ public class PostloginClient {
             if (black == null) {
                 black = "empty";
             }
-
             result.append(i).append(". Game Name: ").append(gameName)
                     .append(" White: ").append(white)
                     .append(" Black: ").append(black)
@@ -89,13 +90,52 @@ public class PostloginClient {
         return result.toString();
     }
 
-    public String joinGame(String... params) {
-
+    public String joinGame(String... params) throws ResponseException{
+        if (params.length == 2) {
+            String gameID = params[0];
+            validateGameID(gameID);
+            String teamColorString = params[1];
+            String teamColor = colorChecking(teamColorString);
+            JoinGameRequest joinGameRequest = new JoinGameRequest(teamColor, Integer.parseInt(gameID));
+            server.joinGame(authToken, joinGameRequest);
+            repl.inGame = true;
+            repl.gameData = currentGameList.get(Integer.parseInt(gameID) - 1);
+            return String.format("Joining %s", currentGameList.get(Integer.parseInt(gameID) - 1).gameName()) ;
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected <ID> [WHITE|BLACK]");
     }
 
-    public String observeGame(String... params) {
-
+    public String observeGame(String... params) throws ResponseException{
+        if (params.length == 1) {
+            String gameID = params[0];
+            validateGameID(gameID);
+            repl.inGame = true;
+            repl.gameData = currentGameList.get(Integer.parseInt(gameID) - 1);
+            return String.format("Observing %s", currentGameList.get(Integer.parseInt(gameID) - 1).gameName()) ;
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected <ID>");
     }
+    private String colorChecking(String teamColorString) throws ResponseException{
+        if (!teamColorString.equals("black") && !teamColorString.equals("white")) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Expected [WHITE|BLACK] for team color");
+        }
+        String teamColor;
+        if (teamColorString.equals("black")) {
+            teamColor = "BLACK";
+        } else  {
+            teamColor = "WHITE";
+        }
+        return teamColor;
+    }
+
+    private void validateGameID(String gameID) throws ResponseException{
+        int gameIDInt = Integer.parseInt(gameID);
+        if (currentGameList.get(gameIDInt - 1) == null) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Invalid Game ID");
+        }
+    }
+
+
 
     public String help() {
         return """

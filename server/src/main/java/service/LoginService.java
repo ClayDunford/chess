@@ -1,10 +1,10 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.MistmatchedPasswordsException;
-import dataaccess.exceptions.NoUsernameInDatabaseException;
+import exception.BadRequestException;
+import exception.DataAccessException;
+import exception.MistmatchedPasswordsException;
+import exception.NoUsernameInDatabaseException;
 import model.AuthData;
 import model.UserData;
 

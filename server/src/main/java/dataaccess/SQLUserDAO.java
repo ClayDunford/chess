@@ -1,10 +1,7 @@
 package dataaccess;
 
 import com.google.gson.Gson;
-import dataaccess.exceptions.AlreadyTakenException;
-import dataaccess.exceptions.DataAccessException;
-import model.AuthData;
-import model.GameData;
+import exception.DataAccessException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 

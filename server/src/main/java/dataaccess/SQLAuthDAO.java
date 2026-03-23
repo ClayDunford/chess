@@ -1,10 +1,8 @@
 package dataaccess;
 
 import com.google.gson.Gson;
-import dataaccess.exceptions.DataAccessException;
-import io.javalin.http.GoneResponse;
+import exception.DataAccessException;
 import model.AuthData;
-import model.UserData;
 
 import java.sql.*;
 

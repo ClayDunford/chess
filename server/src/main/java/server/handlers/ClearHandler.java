@@ -1,6 +1,6 @@
 package server.handlers;
 import com.google.gson.Gson;
-import dataaccess.exceptions.DataAccessException;
+import exception.DataAccessException;
 import io.javalin.http.Context;
 
 import model.ErrorMessage;

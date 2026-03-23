@@ -2,8 +2,8 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.UnauthorizedRequestException;
+import exception.DataAccessException;
+import exception.UnauthorizedRequestException;
 import model.GameData;
 
 import java.util.List;

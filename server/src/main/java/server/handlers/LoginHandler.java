@@ -1,10 +1,10 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.MistmatchedPasswordsException;
-import dataaccess.exceptions.NoUsernameInDatabaseException;
+import exception.BadRequestException;
+import exception.DataAccessException;
+import exception.MistmatchedPasswordsException;
+import exception.NoUsernameInDatabaseException;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.ErrorMessage;

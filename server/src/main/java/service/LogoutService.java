@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.UnauthorizedRequestException;
+import exception.DataAccessException;
+import exception.UnauthorizedRequestException;
 
 public class LogoutService {
     private final AuthDAO authDAO;

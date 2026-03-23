@@ -1,10 +1,10 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.exceptions.AlreadyTakenException;
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.UnauthorizedRequestException;
+import exception.AlreadyTakenException;
+import exception.BadRequestException;
+import exception.DataAccessException;
+import exception.UnauthorizedRequestException;
 import model.GameData;
 import model.requests.JoinGameRequest;
 
@@ -32,13 +32,13 @@ public class JoinGameService {
         GameData gameData = gameDAO.getGame(gameID);
         String teamColor = joinGameRequest.playerColor();
         if (teamColor.equals("BLACK")) {
-            if (gameData.blackUsername() != null) {
+            if (gameData.blackUsername() != null && !gameData.blackUsername().equals(username)) {
                 throw new AlreadyTakenException();
             }
             gameDAO.deleteGame(gameID);
             gameData = new GameData(gameID, gameData.whiteUsername(), username, gameData.gameName(), gameData.game());
         } else {
-            if (gameData.whiteUsername() != null) {
+            if (gameData.whiteUsername() != null && !gameData.whiteUsername().equals(username)) {
                 throw new AlreadyTakenException();
             }
             gameDAO.deleteGame(gameID);

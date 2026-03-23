@@ -1,10 +1,8 @@
 package dataaccess;
 
-import dataaccess.exceptions.DataAccessException;
+import exception.DataAccessException;
 
 import java.sql.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class SQLDAO {
     SQLDAO() {}

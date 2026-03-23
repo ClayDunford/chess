@@ -1,4 +1,4 @@
-package dataaccess.exceptions;
+package exception;
 
 public class MistmatchedPasswordsException extends Exception {
     public MistmatchedPasswordsException() {
