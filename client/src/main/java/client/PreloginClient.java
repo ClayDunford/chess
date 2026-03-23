@@ -34,14 +34,12 @@ public class PreloginClient {
     }
 
     public String login(String... params)  throws ResponseException{
-        if (params.length >= 2) {
+        if (params.length == 2) {
             String username = params[0];
             String password = params[1];
             String email = null;
-            if (params.length == 3) {
-               email = params[2];
-            }
-            UserData userData = new UserData(username, password, email);
+
+            UserData userData = new UserData(username, password, null);
             AuthData authData = server.login(userData);
             repl.authToken = authData.authToken();
             return String.format("Signed is as: %s", username);
@@ -50,7 +48,7 @@ public class PreloginClient {
     }
 
     public String register(String... params) throws ResponseException{
-        if (params.length >= 2) {
+        if (params.length >= 2 && params.length < 4) {
             String username = params[0];
             String password = params[1];
             String email = params[2];

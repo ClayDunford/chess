@@ -143,6 +143,7 @@ public class PostloginClient {
                 - list - lists available games
                 - join <ID> [WHITE|BLACK] - join a preexisting game
                 - observe <ID> - observe a preexisting game
+                - logout - to logout
                 - quit - to exit
                 - help - possible commands
                 """;
