@@ -2,6 +2,7 @@ package client;
 
 import com.sun.nio.sctp.Notification;
 import com.sun.nio.sctp.NotificationHandler;
+import server.ServerFacade;
 
 import java.util.Scanner;
 
@@ -9,15 +10,16 @@ import static ui.EscapeSequences.*;
 
 public class Repl {
     private final PreloginClient preloginClient;
-    private final PostloginClient postloginClient;
-    private final GameplayClient gameplayClient;
+    private final ServerFacade server;
     private State currentState;
+    public String authToken = null;
 
     public Repl(String serverUrl) {
-        preloginClient = new PreloginClient(serverUrl, this);
-        postloginClient = new PostloginClient(serverUrl, this);
-        gameplayClient = new GameplayClient(serverUrl, this);
+        server = new ServerFacade(serverUrl);
         currentState = State.SIGNEDOUT;
+
+        preloginClient = new PreloginClient(server, this);
+
     }
 
     public void run() {
@@ -27,17 +29,20 @@ public class Repl {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")) {
+            if (authToken != null) {
+                currentState = State.SIGNEDIN;
+            }
             printPrompt();
             String line = scanner.nextLine();
 
             try {
-                switch (currentState) {
-                    case State.SIGNEDOUT -> result = preloginClient.eval(line);
-                    case State.SIGNEDIN -> result = postloginClient.eval(line);
-                    case State.GAMEPLAY -> result = gameplayClient.eval(line);
-                }
-
-                System.out.print(SET_BG_COLOR_BLUE + result);
+                //switch (currentState) {
+                //    case State.SIGNEDOUT -> result = preloginClient.eval(line);
+                //    case State.SIGNEDIN -> result = postloginClient.eval(line);
+                //    case State.GAMEPLAY -> result = gameplayClient.eval(line);
+                //}
+                result = preloginClient.eval(line);
+                System.out.print(result);
 
             } catch (Throwable e){
                 var msg = e.toString();
@@ -45,6 +50,7 @@ public class Repl {
             }
 
         }
+        authToken = null;
         System.out.println();
     }
 

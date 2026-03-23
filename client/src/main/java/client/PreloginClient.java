@@ -1,16 +1,20 @@
 package client;
 
 import java.util.Arrays;
-import passoff.exception.ResponseParseException;
+
+import exception.ResponseException;
+import model.AuthData;
+import model.UserData;
+import server.ServerFacade;
 
 public class PreloginClient {
     private final Repl repl;
-    private final String serverUrl;
+    private final ServerFacade server;
 
 
-    public PreloginClient(String passedServerUrl, Repl passedRepl) {
-        serverUrl = passedServerUrl;
+    public PreloginClient(ServerFacade serverFacade, Repl passedRepl) {
         repl = passedRepl;
+        server = serverFacade;
     }
 
     public String eval (String input) {
@@ -21,27 +25,43 @@ public class PreloginClient {
             return switch (cmd) {
                 case "login" -> login(params);
                 case "register" -> register(params);
-                case "quit" -> quit();
+                case "quit" -> "quit";
                 default -> help();
             };
-        } catch (ResponseParseException ex) {
+        } catch (ResponseException ex) {
             return ex.getMessage();
         }
     }
 
-    public String login(String... params) {
-        if (params.length > 1) {
-
+    public String login(String... params)  throws ResponseException{
+        if (params.length >= 2) {
+            String username = params[0];
+            String password = params[1];
+            String email = null;
+            if (params.length == 3) {
+               email = params[2];
+            }
+            UserData userData = new UserData(username, password, email);
+            AuthData authData = server.login(userData);
+            repl.authToken = authData.authToken();
+            return String.format("Signed is as: %s", username);
         }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <username> <password>");
     }
 
-    public String register(String... params) {
-
+    public String register(String... params) throws ResponseException{
+        if (params.length >= 2) {
+            String username = params[0];
+            String password = params[1];
+            String email = params[2];
+            UserData userData = new UserData(username, password, email);
+            AuthData authData = server.register(userData);
+            repl.authToken = authData.authToken();
+            return String.format("Signed is as: %s", username);
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <username> <password> <email>");
     }
 
-    public String quit() {
-
-    }
 
     public String help() {
         return """
