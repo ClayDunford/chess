@@ -6,8 +6,8 @@ import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedRequestException;
 import io.javalin.http.Context;
 import model.*;
-import server.requests.CreateGameRequest;
-import server.results.CreateGameResult;
+import model.requests.CreateGameRequest;
+import model.results.CreateGameResult;
 import service.CreateGameService;
 
 public class CreateGameHandler {

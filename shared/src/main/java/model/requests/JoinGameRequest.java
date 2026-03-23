@@ -1,4 +1,4 @@
-package server.requests;
+package model.requests;
 
 public record JoinGameRequest(String playerColor, int gameID) {
     public boolean validate() {

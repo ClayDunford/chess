@@ -1,4 +1,4 @@
-package server.results;
+package model.results;
 
 public record CreateGameResult(int gameID) {
 }

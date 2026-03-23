@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedRequestException;
 import io.javalin.http.Context;
-import kotlin.DslMarker;
 import model.ErrorMessage;
 import model.GameData;
-import server.results.ListGamesResult;
+import model.results.ListGamesResult;
 import service.ListGamesService;
 
 import java.util.List;

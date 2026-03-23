@@ -6,7 +6,7 @@ import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedRequestException;
 import model.GameData;
-import server.requests.JoinGameRequest;
+import model.requests.JoinGameRequest;
 
 public class JoinGameService {
     private final AuthDAO authDAO;

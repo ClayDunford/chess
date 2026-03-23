@@ -7,7 +7,7 @@ import dataaccess.GameDAO;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedRequestException;
 import model.*;
-import server.requests.CreateGameRequest;
+import model.requests.CreateGameRequest;
 
 public class CreateGameService {
     private final AuthDAO authDAO;

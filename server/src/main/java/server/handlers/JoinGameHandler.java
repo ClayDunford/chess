@@ -7,7 +7,7 @@ import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedRequestException;
 import io.javalin.http.Context;
 import model.ErrorMessage;
-import server.requests.JoinGameRequest;
+import model.requests.JoinGameRequest;
 import service.JoinGameService;
 
 public class JoinGameHandler {
