@@ -83,12 +83,14 @@ public class PostloginClient {
             if (black == null) {
                 black = "empty";
             }
-            result.append("Game ID: ").append(i)
+            result.append("Game #: ").append(i)
                     .append(". Game Name: ").append(gameName)
                     .append(" White: ").append(white)
                     .append(" Black: ").append(black)
                     .append("\n");
+            i++;
         }
+
 
         return result.toString();
     }
@@ -145,7 +147,7 @@ public class PostloginClient {
     private void validateGameID(String gameID) throws ResponseException{
         try {
             int gameIDInt = Integer.parseInt(gameID);
-            if (gameIDInt > currentGameList.size() || currentGameList.get(gameIDInt - 1) == null) {
+            if (gameIDInt > currentGameList.size() || gameIDInt < 0 || currentGameList.get(gameIDInt - 1) == null) {
                 throw new ResponseException(ResponseException.Code.ClientError, "Invalid Game ID");
             }
         } catch (NumberFormatException e) {

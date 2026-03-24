@@ -38,17 +38,24 @@ public class ChessBoardGenerator {
         boolean alternator = true;
         int row;
         int rowIter;
-
+        int colReset;
+        int col;
+        int colIter;
         if (curTeamColor == ChessGame.TeamColor.WHITE) {
             row = 8;
             rowIter = -1;
+            colReset = 1;
+            colIter = 1;
         } else {
             row = 1;
             rowIter = 1;
+            colReset = 8;
+            colIter = -1;
         }
         while (row < 9 && row > 0) {
             drawBorder(row);
-            for (int col = 1; col <9; col++) {
+            col = colReset;
+            while (col < 9 && col > 0){
                 if (alternator) {
                     out.print(SET_BG_COLOR_LIGHT_GREY);
                 } else {
@@ -58,7 +65,9 @@ public class ChessBoardGenerator {
 
                 alternator = !alternator;
                 out.print(RESET_BG_COLOR);
+                col = col + colIter;
             }
+
             drawBorder(row);
             out.println();
             alternator = !alternator;
@@ -107,8 +116,19 @@ public class ChessBoardGenerator {
     private void drawHeaders() {
         out.print(SET_BG_COLOR_DARK_GREY);
         String[] headers = {" ", " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", " "};
-        for (int boardCol = 0; boardCol < headers.length; ++boardCol) {
-            drawHeader(headers[boardCol]);
+
+        int col;
+        int colIter;
+        if (curTeamColor == ChessGame.TeamColor.WHITE) {
+            col= 0;
+            colIter = 1;
+        } else {
+            col= 9;
+            colIter = -1;
+        }
+        while (col < 10 && col > -1){
+            drawHeader(headers[col]);
+            col = col + colIter;
         }
         out.print(RESET_BG_COLOR);
         out.println();
