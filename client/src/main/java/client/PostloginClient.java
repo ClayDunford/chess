@@ -18,6 +18,7 @@ public class PostloginClient {
     private final ServerFacade server;
     private String authToken;
     private List<GameData> currentGameList = new ArrayList<>();
+    private ChessGame.TeamColor curColor;
 
     public PostloginClient(ServerFacade serverFacade, Repl passedRepl) {
         repl = passedRepl;
@@ -82,7 +83,8 @@ public class PostloginClient {
             if (black == null) {
                 black = "empty";
             }
-            result.append(i).append(". Game Name: ").append(gameName)
+            result.append("Game ID: ").append(i)
+                    .append(". Game Name: ").append(gameName)
                     .append(" White: ").append(white)
                     .append(" Black: ").append(black)
                     .append("\n");
@@ -92,28 +94,35 @@ public class PostloginClient {
     }
 
     public String joinGame(String... params) throws ResponseException{
+        if (listGames().isEmpty()) {
+            throw new ResponseException(ResponseException.Code.ClientError, "List games before entering an ID");
+        }
         if (params.length == 2) {
             String gameID = params[0];
             validateGameID(gameID);
             String teamColorString = params[1];
             String teamColor = colorChecking(teamColorString);
+
             JoinGameRequest joinGameRequest = new JoinGameRequest(teamColor, Integer.parseInt(gameID));
             server.joinGame(authToken, joinGameRequest);
             repl.inGame = true;
             repl.gameData = currentGameList.get(Integer.parseInt(gameID) - 1);
-            new ChessBoardGenerator(repl.gameData.game(), ChessGame.TeamColor.BLACK).drawBoard();
+            new ChessBoardGenerator(repl.gameData.game(), curColor);
             return String.format("Joining %s", currentGameList.get(Integer.parseInt(gameID) - 1).gameName()) ;
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <ID> [WHITE|BLACK]");
     }
 
     public String observeGame(String... params) throws ResponseException{
+        if (listGames().isEmpty()) {
+            throw new ResponseException(ResponseException.Code.ClientError, "List games before entering an ID");
+        }
         if (params.length == 1) {
             String gameID = params[0];
             validateGameID(gameID);
             repl.inGame = true;
             repl.gameData = currentGameList.get(Integer.parseInt(gameID) - 1);
-            new ChessBoardGenerator(repl.gameData.game(), ChessGame.TeamColor.WHITE).drawBoard();
+            new ChessBoardGenerator(repl.gameData.game(), ChessGame.TeamColor.WHITE);
             return String.format("Observing %s", currentGameList.get(Integer.parseInt(gameID) - 1).gameName()) ;
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <ID>");
@@ -125,8 +134,10 @@ public class PostloginClient {
         String teamColor;
         if (teamColorString.equals("black")) {
             teamColor = "BLACK";
+            curColor = ChessGame.TeamColor.BLACK;
         } else  {
             teamColor = "WHITE";
+            curColor = ChessGame.TeamColor.WHITE;
         }
         return teamColor;
     }

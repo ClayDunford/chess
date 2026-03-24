@@ -11,9 +11,9 @@ import java.nio.charset.StandardCharsets;
 import static ui.EscapeSequences.*;
 
 public class ChessBoardGenerator {
-    private ChessBoard chessBoard;
-    private ChessGame.TeamColor curTeamColor;
-    private PrintStream out;
+    private final ChessBoard chessBoard;
+    private final ChessGame.TeamColor curTeamColor;
+    private final PrintStream out;
 
 
 
@@ -23,6 +23,7 @@ public class ChessBoardGenerator {
         curTeamColor = teamColor;
         out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         drawBoard();
+        out.print(RESET_TEXT_COLOR);
     }
 
     public void drawBoard() {
