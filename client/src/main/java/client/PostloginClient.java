@@ -6,7 +6,7 @@ import model.GameData;
 import model.requests.CreateGameRequest;
 import model.requests.JoinGameRequest;
 import model.results.ListGamesResult;
-import server.ServerFacade;
+import serverfacade.ServerFacade;
 import ui.ChessBoardGenerator;
 
 import java.util.ArrayList;

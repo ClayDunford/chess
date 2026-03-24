@@ -1,9 +1,7 @@
 package client;
 
-import com.sun.nio.sctp.Notification;
-import com.sun.nio.sctp.NotificationHandler;
 import model.GameData;
-import server.ServerFacade;
+import serverfacade.ServerFacade;
 
 import java.util.Scanner;
 

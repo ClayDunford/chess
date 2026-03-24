@@ -5,7 +5,7 @@ import java.util.Arrays;
 import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
-import server.ServerFacade;
+import serverfacade.ServerFacade;
 
 public class PreloginClient {
     private final Repl repl;
