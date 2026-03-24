@@ -3,6 +3,7 @@ package serverfacade;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
+import model.ErrorMessage;
 import model.GameData;
 import model.UserData;
 import model.requests.CreateGameRequest;
@@ -59,10 +60,9 @@ public class ServerFacade {
             handleResponse(response, null);
         }
 
-        public void clear(String authToken) throws ResponseException {
-            var request = buildRequest("DELETE", "/db",null, authToken);
-            var response = sendRequest(request);
-            handleResponse(response, null);
+        public void clear() throws ResponseException {
+            var request = buildRequest("DELETE", "/db",null, null);
+            sendRequest(request);
         }
 
 
@@ -102,7 +102,8 @@ public class ServerFacade {
                 var body = response.body();
 
                 if (body != null) {
-                    throw ResponseException.fromJson(body);
+                    ErrorMessage error = new Gson().fromJson(body, ErrorMessage.class);
+                    throw new ResponseException(ResponseException.fromHttpStatusCode(status), error.message());
                 }
 
                 throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);

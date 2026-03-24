@@ -10,14 +10,13 @@ import static ui.EscapeSequences.*;
 public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
-    private final ServerFacade server;
     private State currentState;
     public String authToken = null;
     boolean inGame = false;
     GameData gameData = null;
 
     public Repl(String serverUrl) {
-        server = new ServerFacade(serverUrl);
+        ServerFacade server = new ServerFacade(serverUrl);
         currentState = State.SIGNEDOUT;
 
         preloginClient = new PreloginClient(server, this);
@@ -53,6 +52,7 @@ public class Repl {
             } catch (Throwable e){
                 var msg = e.toString();
                 System.out.print(SET_TEXT_COLOR_RED + msg);
+                System.out.print(RESET_TEXT_COLOR);
             }
 
         }

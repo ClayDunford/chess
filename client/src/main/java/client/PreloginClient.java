@@ -37,7 +37,6 @@ public class PreloginClient {
         if (params.length == 2) {
             String username = params[0];
             String password = params[1];
-            String email = null;
 
             UserData userData = new UserData(username, password, null);
             AuthData authData = server.login(userData);
@@ -51,7 +50,12 @@ public class PreloginClient {
         if (params.length >= 2 && params.length < 4) {
             String username = params[0];
             String password = params[1];
-            String email = params[2];
+            String email;
+            if (params.length == 3) {
+                email = params[2];
+            } else {
+                email = null;
+            }
             UserData userData = new UserData(username, password, email);
             AuthData authData = server.register(userData);
             repl.authToken = authData.authToken();

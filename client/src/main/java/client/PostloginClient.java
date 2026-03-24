@@ -143,9 +143,13 @@ public class PostloginClient {
     }
 
     private void validateGameID(String gameID) throws ResponseException{
-        int gameIDInt = Integer.parseInt(gameID);
-        if (currentGameList.get(gameIDInt - 1) == null) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Invalid Game ID");
+        try {
+            int gameIDInt = Integer.parseInt(gameID);
+            if (gameIDInt > currentGameList.size() || currentGameList.get(gameIDInt - 1) == null) {
+                throw new ResponseException(ResponseException.Code.ClientError, "Invalid Game ID");
+            }
+        } catch (NumberFormatException e) {
+            throw  new ResponseException(ResponseException.Code.ClientError, "Invalid Game ID");
         }
     }
 
