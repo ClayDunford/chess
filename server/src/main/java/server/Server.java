@@ -3,11 +3,13 @@ package server;
 import dataaccess.*;
 import io.javalin.*;
 import server.handlers.*;
+import server.websocket.WebSocketHandler;
 import service.*;
 
 public class Server {
 
     private final Javalin javalin;
+    private final WebSocketHandler webSocketHandler;
     private final AuthDAO authDAO;
     private final UserDAO userDAO;
     private final GameDAO gameDAO;
@@ -16,6 +18,9 @@ public class Server {
         this(new SQLAuthDAO(), new SQLUserDAO(), new SQLGameDAO());
     }
     public Server(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO) {
+        // WebSocket
+        webSocketHandler = new WebSocketHandler();
+
         // DAOS
         this.authDAO = authDAO;
         this.userDAO = userDAO;
@@ -46,7 +51,12 @@ public class Server {
                 .post("/game", createGameHandler::createGame)
                 .get("/game", listGamesHandler::listGames)
                 .put("/game", joinGameHandler::joinGame)
-                .delete("/db", clearHandler::clear);
+                .delete("/db", clearHandler::clear)
+                .ws("/ws", ws -> {
+                    ws.onConnect(webSocketHandler);
+                    ws.onMessage(webSocketHandler);
+                    ws.onClose(webSocketHandler);
+                });
 
         // Register your endpoints and exception handlers here.
 
