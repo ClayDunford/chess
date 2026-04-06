@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.sun.nio.sctp.Notification;
 import exception.ResponseException;
 import jakarta.websocket.*;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import javax.print.URIException;
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class WebSocketFacade extends Endpoint {
 
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
+                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
                     notificationHandler.notify(notification);
                 }
             });
@@ -41,4 +43,14 @@ public class WebSocketFacade extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig){}
 
+    public void connect(String authToken, Integer gameID) throws ResponseException{
+        try {
+            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch(IOException ex) {
+            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+        }
+    }
 }
+
+

@@ -18,13 +18,14 @@ public class Server {
         this(new SQLAuthDAO(), new SQLUserDAO(), new SQLGameDAO());
     }
     public Server(AuthDAO authDAO, UserDAO userDAO, GameDAO gameDAO) {
-        // WebSocket
-        webSocketHandler = new WebSocketHandler();
 
         // DAOS
         this.authDAO = authDAO;
         this.userDAO = userDAO;
         this.gameDAO = gameDAO;
+
+        // WebSocket
+        webSocketHandler = new WebSocketHandler(authDAO, gameDAO);
 
         // Services
         RegisterService registerService = new RegisterService(userDAO, authDAO);
