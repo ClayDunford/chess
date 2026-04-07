@@ -1,8 +1,6 @@
 package server.websocket;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -100,6 +98,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void makeMove(UserGameCommand command, String username, Session session) throws DataAccessException, InvalidMoveException, IOException {
         GameData gameData = gameDAO.getGame(command.getGameID());
         ChessMove newMove = command.getMove();
+        pieceChecker(gameData, username, newMove);
         ChessGame currentGame = gameData.game();
         currentGame.makeMove(newMove);
         gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), currentGame);
@@ -111,6 +110,20 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String chessGame = new Gson().toJson(gameData.game());
         ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, chessGame);
         connections.broadcast(command.getGameID(), null, loadGameMessage);
+    }
+
+    private void pieceChecker(GameData gameData, String username, ChessMove move) throws InvalidMoveException{
+        ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
+        if (username.equals(gameData.blackUsername())) {
+            currentColor = ChessGame.TeamColor.BLACK;
+        }
+        ChessPosition startPos = move.getStartPosition();
+        ChessBoard board = gameData.game().getBoard();
+        ChessGame.TeamColor pieceColor = board.getPiece(startPos).getTeamColor();
+        if (pieceColor != currentColor) {
+            throw new InvalidMoveException();
+        }
+
     }
 
     private void gameChecker(GameData gameData, Session session) throws IOException {
