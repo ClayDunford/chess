@@ -104,8 +104,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         currentGame.makeMove(newMove);
         gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), currentGame);
         gameDAO.createGame(gameData);
-
         String message = String.format("%s made a move: %s", username, newMove);
+        gameChecker(gameData, session);
         ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(command.getGameID(), session, notificationMessage);
         String chessGame = new Gson().toJson(gameData.game());
@@ -113,9 +113,32 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.broadcast(command.getGameID(), null, loadGameMessage);
     }
 
-    private void gameChecker(GameData gameData, Session session) {
+    private void gameChecker(GameData gameData, Session session) throws IOException {
         ChessGame currentGame = gameData.game();
+        String currentTeam = "White";
+        String currentUser = gameData.whiteUsername();
+        ChessGame.TeamColor currentColor = ChessGame.TeamColor.WHITE;
 
+        String message = null;
+        for (int i = 0; i < 2; i++) {
+            if (currentGame.isInCheck(currentColor)) {
+                if (currentGame.isInCheckmate(currentColor)) {
+                    message = String.format("%s (%s) is in Checkmate", currentUser, currentTeam);
+
+                } else {
+                    message = String.format("%s (%s) is in Check", currentUser, currentTeam);
+                }
+            } else if (currentGame.isInStalemate(currentColor)) {
+                message = String.format("%s (%s) is in Stalemate", currentUser, currentTeam);
+            }
+            if (message != null) {
+                connections.broadcast(gameData.gameID(), null, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
+            }
+            message = null;
+            currentTeam = "Black";
+            currentUser = gameData.blackUsername();
+            currentColor = ChessGame.TeamColor.BLACK;
+        }
     }
 
     private void resign(Integer gameID, String authToken, Session session) {
