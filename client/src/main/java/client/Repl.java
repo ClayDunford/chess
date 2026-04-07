@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import client.websocket.WebSocketFacade;
 import model.GameData;
 import serverfacade.ServerFacade;
@@ -15,6 +16,7 @@ public class Repl {
     private State currentState;
     public String authToken = null;
     boolean inGame = false;
+    ChessGame.TeamColor curColor = null;
     GameData gameData = null;
 
     public Repl(String serverUrl) {
@@ -50,7 +52,7 @@ public class Repl {
                 switch (currentState) {
                     case State.SIGNEDOUT -> result = preloginClient.eval(line);
                     case State.SIGNEDIN -> result = postloginClient.eval(line);
-                    case State.GAMEPLAY -> result = postloginClient.eval(line);
+                    case State.GAMEPLAY -> result = gameplayClient.eval(line);
                 }
                 System.out.print(result);
 
@@ -66,7 +68,7 @@ public class Repl {
     }
 
 
-    private void printPrompt() {
-        System.out.print("\n" + currentState + ">>>");
+    public void printPrompt() {
+        System.out.print("\n"+RESET_TEXT_COLOR + currentState + ">>>");
     }
 }

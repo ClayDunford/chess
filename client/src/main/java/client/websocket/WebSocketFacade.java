@@ -31,9 +31,6 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                    if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-
-                    }
                     notificationHandler.notify(notification);
                 }
             });

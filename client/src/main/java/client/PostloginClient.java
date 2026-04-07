@@ -109,7 +109,7 @@ public class PostloginClient {
             server.joinGame(authToken, joinGameRequest);
             repl.inGame = true;
             repl.gameData = currentGameList.get(Integer.parseInt(gameID) - 1);
-            new ChessBoardGenerator(repl.gameData.game(), curColor);
+            repl.curColor = curColor;
             return String.format("Joining %s", currentGameList.get(Integer.parseInt(gameID) - 1).gameName()) ;
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <ID> [WHITE|BLACK]");
@@ -124,7 +124,7 @@ public class PostloginClient {
             validateGameID(gameID);
             repl.inGame = true;
             repl.gameData = currentGameList.get(Integer.parseInt(gameID) - 1);
-            new ChessBoardGenerator(repl.gameData.game(), ChessGame.TeamColor.WHITE);
+            repl.curColor = curColor;
             return String.format("Observing %s", currentGameList.get(Integer.parseInt(gameID) - 1).gameName()) ;
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <ID>");
