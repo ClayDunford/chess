@@ -140,8 +140,8 @@ public class ServerFacadeTests {
         AuthData fakeListGamesAuth = facade.register(fakeListGamesUser);
         String authToken = fakeListGamesAuth.authToken();
 
-        GameData listGameDataOne = new GameData(1, null, null, "game1", new ChessGame());
-        GameData listGameDataTwo = new GameData(2, null, null, "game2", new ChessGame());
+        GameData listGameDataOne = new GameData(1, null, null, "game1", new ChessGame(), false);
+        GameData listGameDataTwo = new GameData(2, null, null, "game2", new ChessGame(), false);
 
         facade.createGame(authToken, new CreateGameRequest(listGameDataOne.gameName()));
         facade.createGame(authToken, new CreateGameRequest(listGameDataTwo.gameName()));
@@ -171,7 +171,7 @@ public class ServerFacadeTests {
         AuthData fakeJoinGamesAuth = facade.register(fakeJoinGamesUser);
         String authToken = fakeJoinGamesAuth.authToken();
 
-        GameData listGameDataOne = new GameData(1, fakeJoinGamesAuth.username(), null, "game1", new ChessGame());
+        GameData listGameDataOne = new GameData(1, fakeJoinGamesAuth.username(), null, "game1", new ChessGame(), false);
 
         facade.createGame(authToken, new CreateGameRequest(listGameDataOne.gameName()));
         facade.joinGame(authToken, new JoinGameRequest("WHITE", 1));

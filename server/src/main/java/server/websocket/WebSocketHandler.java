@@ -111,7 +111,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             pieceChecker(gameData, username, newMove);
             ChessGame currentGame = gameData.game();
             currentGame.makeMove(newMove);
-            gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), currentGame);
+            gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), currentGame, false);
             gameDAO.createGame(gameData);
             String message = String.format("%s made a move: %s", username, newMove);
             gameChecker(gameData, session);
