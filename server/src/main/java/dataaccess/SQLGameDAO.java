@@ -33,8 +33,8 @@ public class SQLGameDAO extends SQLDAO implements GameDAO{
         if (gameData == null) {
             throw new DataAccessException("gameData is null");
         }
-        String statement = "INSERT INTO game (gameID, gameData) VALUES (?,?)";
-        executeUpdate(statement, gameData.gameID(), gameData);
+        String statement = "INSERT INTO game (gameID, gameData) VALUES (?,?) ON DUPLICATE KEY UPDATE gameData = ?";
+        executeUpdate(statement, gameData.gameID(), gameData, gameData);
     }
 
     private GameData readGame(ResultSet rs) throws SQLException{

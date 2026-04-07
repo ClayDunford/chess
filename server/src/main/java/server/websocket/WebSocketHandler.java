@@ -1,5 +1,8 @@
 package server.websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -42,14 +45,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             switch (userGameCommand.getCommandType()) {
                 case CONNECT -> connect(gameID, username, ctx.session);
                 case MAKE_MOVE -> makeMove(userGameCommand, username, ctx.session);
-                case RESIGN -> resign(userGameCommand, userGameCommand.getAuthToken(), ctx.session);
-                case LEAVE -> leave(userGameCommand, userGameCommand.getAuthToken(), ctx.session);
+                case RESIGN -> resign(userGameCommand.getGameID(), username, ctx.session);
+                case LEAVE -> leave(userGameCommand.getGameID(), username, ctx.session);
             }
 
 
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (DataAccessException | BadRequestException ex) {
+        } catch (DataAccessException | BadRequestException | InvalidMoveException ex) {
             sendMessage(ctx.session, ServerMessage.ServerMessageType.ERROR, ex.getMessage());
         }
     }
@@ -72,9 +75,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    private void connect(Integer gameID, String authToken, Session session) throws DataAccessException, IOException {
+    private void connect(Integer gameID, String username, Session session) throws DataAccessException, IOException {
         connections.add(gameID, session);
-        String username = authDAO.getAuth(authToken).username();
         GameData gameData = gameDAO.getGame(gameID);
         String teamcolor = null;
         if (gameData.blackUsername().equals(username)) {
@@ -95,7 +97,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         sendMessage(session, ServerMessage.ServerMessageType.LOAD_GAME, chessGame);
     }
 
-    private void makeMove(Integer gameID, String authToken, Session session) {
+    private void makeMove(UserGameCommand command, String username, Session session) throws DataAccessException, InvalidMoveException, IOException {
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        ChessMove newMove = command.getMove();
+        ChessGame currentGame = gameData.game();
+        currentGame.makeMove(newMove);
+        gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), currentGame);
+        gameDAO.createGame(gameData);
+
+        String message = String.format("%s made a move: %s", username, newMove);
+        ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(command.getGameID(), session, notificationMessage);
+        String chessGame = new Gson().toJson(gameData.game());
+        ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, chessGame);
+        connections.broadcast(command.getGameID(), null, loadGameMessage);
+    }
+
+    private void gameChecker(GameData gameData, Session session) {
+        ChessGame currentGame = gameData.game();
 
     }
 
