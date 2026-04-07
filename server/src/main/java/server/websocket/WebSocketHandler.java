@@ -10,7 +10,6 @@ import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
@@ -52,9 +51,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleClose(WsCloseContext ctx) {
 
     }
+    private void sendMessage(Session session, ServerMessage.ServerMessageType type, String message) {
+
+    }
 
     private void connect(Integer gameID, String authToken, Session session) throws DataAccessException, IOException {
         connections.add(gameID, session);
+        if (gameDAO.getGame(gameID) == null) {
+            throw
+        }
         String username = authDAO.getAuth(authToken).username();
         GameData gameData = gameDAO.getGame(gameID);
         String teamcolor = null;
@@ -69,8 +74,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } else{
             message = String.format("%s is observing the game! ", username);
         }
-        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(gameID, session, serverMessage);
+        var gameServerMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(gameID, session, gameServerMessage);
+
+        String chessGame = new Gson().toJson(gameData.game());
+        String userServerMessage = new Gson().toJson(new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, chessGame));
+        session.getRemote().sendString(userServerMessage);
     }
 
     private void makeMove(Integer gameID, String authToken, Session session) {

@@ -1,13 +1,12 @@
 package client.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
-import com.sun.nio.sctp.Notification;
 import exception.ResponseException;
 import jakarta.websocket.*;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
-import javax.print.URIException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,6 +31,10 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+                    if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+                        ChessGame game = new Gson().fromJson(notification.notificationMessage, ChessGame.class);
+
+                    }
                     notificationHandler.notify(notification);
                 }
             });
