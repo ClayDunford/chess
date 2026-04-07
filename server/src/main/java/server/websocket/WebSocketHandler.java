@@ -104,7 +104,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         GameData gameData = gameDAO.getGame(command.getGameID());
         if (!resignedChecker(gameData)) {
             if (teamColorFinder(gameData, username) == null) {
-                throw new InvalidMoveException();
+                throw new InvalidMoveException("Observers cannot make moves");
             }
             ChessMove newMove = command.getMove();
             pieceChecker(gameData, username, newMove);
@@ -133,7 +133,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessBoard board = gameData.game().getBoard();
         ChessGame.TeamColor pieceColor = board.getPiece(startPos).getTeamColor();
         if (pieceColor != currentColor) {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Attempting to move a piece of the other team's color");
         }
     }
 
