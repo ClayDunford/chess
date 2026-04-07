@@ -1,5 +1,6 @@
 package client;
 
+import client.websocket.WebSocketFacade;
 import model.GameData;
 import serverfacade.ServerFacade;
 
@@ -10,6 +11,7 @@ import static ui.EscapeSequences.*;
 public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
+    private final GameplayClient gameplayClient;
     private State currentState;
     public String authToken = null;
     boolean inGame = false;
@@ -21,6 +23,7 @@ public class Repl {
 
         preloginClient = new PreloginClient(server, this);
         postloginClient = new PostloginClient(server, this);
+        gameplayClient = new GameplayClient(server, this, serverUrl);
 
     }
 
@@ -35,6 +38,8 @@ public class Repl {
                 currentState = State.SIGNEDIN;
                 if (inGame) {
                     currentState = State.GAMEPLAY;
+                } else {
+                    currentState = State.SIGNEDOUT;
                 }
             } else {
                 currentState = State.SIGNEDOUT;

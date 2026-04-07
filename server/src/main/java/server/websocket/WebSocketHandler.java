@@ -53,7 +53,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
-    private void connect(Integer gameID, String authToken, Session session) throws DataAccessException {
+    private void connect(Integer gameID, String authToken, Session session) throws DataAccessException, IOException {
         connections.add(gameID, session);
         String username = authDAO.getAuth(authToken).username();
         GameData gameData = gameDAO.getGame(gameID);
@@ -69,9 +69,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } else{
             message = String.format("%s is observing the game! ", username);
         }
-
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-
+        connections.broadcast(gameID, session, serverMessage);
     }
 
     private void makeMove(Integer gameID, String authToken, Session session) {
