@@ -16,6 +16,7 @@ import java.io.IOException;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
     private final ConnectionManager connections = new ConnectionManager();
+    private boolean resigned = false;
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
 
@@ -43,7 +44,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             switch (userGameCommand.getCommandType()) {
                 case CONNECT -> connect(gameID, username, ctx.session);
                 case MAKE_MOVE -> makeMove(userGameCommand, username, ctx.session);
-                case RESIGN -> resign(userGameCommand.getGameID(), username, ctx.session);
+                case RESIGN -> resign(userGameCommand, username, ctx.session);
                 case LEAVE -> leave(userGameCommand.getGameID(), username, ctx.session);
             }
 
@@ -76,12 +77,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void connect(Integer gameID, String username, Session session) throws DataAccessException, IOException {
         connections.add(gameID, session);
         GameData gameData = gameDAO.getGame(gameID);
-        String teamcolor = null;
-        if (gameData.blackUsername().equals(username)) {
-            teamcolor = "black";
-        } else if (gameData.whiteUsername().equals(username)) {
-            teamcolor = "white";
-        }
+        String teamcolor = teamColorFinder(gameData, username);
         String message;
         if (teamcolor != null) {
             message = String.format("%s joined the game as %s", username, teamcolor);
@@ -95,21 +91,38 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         sendMessage(session, ServerMessage.ServerMessageType.LOAD_GAME, chessGame);
     }
 
+    private String teamColorFinder(GameData gameData, String username) {
+        String teamcolor = null;
+        if (gameData.blackUsername().equals(username)) {
+            teamcolor = "black";
+        } else if (gameData.whiteUsername().equals(username)) {
+            teamcolor = "white";
+        }
+        return teamcolor;
+    }
+
     private void makeMove(UserGameCommand command, String username, Session session) throws DataAccessException, InvalidMoveException, IOException {
-        GameData gameData = gameDAO.getGame(command.getGameID());
-        ChessMove newMove = command.getMove();
-        pieceChecker(gameData, username, newMove);
-        ChessGame currentGame = gameData.game();
-        currentGame.makeMove(newMove);
-        gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), currentGame);
-        gameDAO.createGame(gameData);
-        String message = String.format("%s made a move: %s", username, newMove);
-        gameChecker(gameData, session);
-        ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(command.getGameID(), session, notificationMessage);
-        String chessGame = new Gson().toJson(gameData.game());
-        ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, chessGame);
-        connections.broadcast(command.getGameID(), null, loadGameMessage);
+        if (!resigned) {
+            GameData gameData = gameDAO.getGame(command.getGameID());
+            if (teamColorFinder(gameData, username) == null) {
+                throw new InvalidMoveException();
+            }
+            ChessMove newMove = command.getMove();
+            pieceChecker(gameData, username, newMove);
+            ChessGame currentGame = gameData.game();
+            currentGame.makeMove(newMove);
+            gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), currentGame);
+            gameDAO.createGame(gameData);
+            String message = String.format("%s made a move: %s", username, newMove);
+            gameChecker(gameData, session);
+            ServerMessage notificationMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(command.getGameID(), session, notificationMessage);
+            String chessGame = new Gson().toJson(gameData.game());
+            ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, chessGame);
+            connections.broadcast(command.getGameID(), null, loadGameMessage);
+        } else {
+            sendMessage(session, ServerMessage.ServerMessageType.NOTIFICATION, "Game is over");
+        }
     }
 
     private void pieceChecker(GameData gameData, String username, ChessMove move) throws InvalidMoveException{
@@ -154,8 +167,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private void resign(Integer gameID, String authToken, Session session) {
-
+    private void resign(UserGameCommand command, String username, Session session) throws DataAccessException, IOException, InvalidMoveException{
+        if (resigned) {
+            throw new InvalidMoveException();
+        }
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        String teamColor = teamColorFinder(gameData, username);
+        if (teamColor == null) {
+            throw new InvalidMoveException();
+        }
+        resigned = true;
+        String message = String.format("%s (%s) has resigned!", username, teamColor);
+        connections.broadcast(command.getGameID(), null, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
     }
 
     private void leave(Integer gameID, String authToken, Session session) {

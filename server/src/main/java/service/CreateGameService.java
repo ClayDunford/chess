@@ -28,7 +28,7 @@ public class CreateGameService {
         }
         String gameName = createGameRequest.gameName();
         int gameID = gameDAO.getSize() + 1;
-        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
+        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame(), false);
         gameDAO.createGame(gameData);
         return gameData;
     }
