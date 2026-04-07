@@ -16,7 +16,6 @@ import java.io.IOException;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
     private final ConnectionManager connections = new ConnectionManager();
-    private boolean resigned = false;
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
 
@@ -45,7 +44,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case CONNECT -> connect(gameID, username, ctx.session);
                 case MAKE_MOVE -> makeMove(userGameCommand, username, ctx.session);
                 case RESIGN -> resign(userGameCommand, username, ctx.session);
-                case LEAVE -> leave(userGameCommand.getGameID(), username, ctx.session);
+                case LEAVE -> leave(userGameCommand, username, ctx.session);
             }
 
 
@@ -93,17 +92,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private String teamColorFinder(GameData gameData, String username) {
         String teamcolor = null;
-        if (gameData.blackUsername().equals(username)) {
-            teamcolor = "black";
-        } else if (gameData.whiteUsername().equals(username)) {
-            teamcolor = "white";
+        if (username.equals(gameData.blackUsername())) {
+            teamcolor = "Black";
+        } else if (username.equals(gameData.whiteUsername())) {
+            teamcolor = "White";
         }
         return teamcolor;
     }
 
     private void makeMove(UserGameCommand command, String username, Session session) throws DataAccessException, InvalidMoveException, IOException {
-        if (!resigned) {
-            GameData gameData = gameDAO.getGame(command.getGameID());
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        if (!resignedChecker(gameData)) {
             if (teamColorFinder(gameData, username) == null) {
                 throw new InvalidMoveException();
             }
@@ -121,7 +120,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             ServerMessage loadGameMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, chessGame);
             connections.broadcast(command.getGameID(), null, loadGameMessage);
         } else {
-            sendMessage(session, ServerMessage.ServerMessageType.NOTIFICATION, "Game is over");
+            sendMessage(session, ServerMessage.ServerMessageType.ERROR, "Game is over");
         }
     }
 
@@ -136,7 +135,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         if (pieceColor != currentColor) {
             throw new InvalidMoveException();
         }
+    }
 
+    private boolean resignedChecker(GameData gameData) {
+        return gameData.resigned();
     }
 
     private void gameChecker(GameData gameData, Session session) throws IOException {
@@ -168,22 +170,42 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void resign(UserGameCommand command, String username, Session session) throws DataAccessException, IOException, InvalidMoveException{
-        if (resigned) {
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        if (resignedChecker(gameData)) {
             throw new InvalidMoveException();
         }
-        GameData gameData = gameDAO.getGame(command.getGameID());
         String teamColor = teamColorFinder(gameData, username);
         if (teamColor == null) {
             throw new InvalidMoveException();
         }
-        resigned = true;
+        gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game(), true);
+        gameDAO.createGame(gameData);
         String message = String.format("%s (%s) has resigned!", username, teamColor);
         connections.broadcast(command.getGameID(), null, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
     }
 
-    private void leave(Integer gameID, String authToken, Session session) {
+    private void leave(UserGameCommand command, String username, Session session) throws DataAccessException, IOException{
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        String teamColor = teamColorFinder(gameData, username);
+        String message;
+        if (teamColor != null) {
+            message = String.format("%s (%s) has left the game! ", username, teamColor);
+        } else {
+            message = String.format("%s has left observing the game! ", username);
+        }
+        ServerMessage serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(gameData.gameID(), session, serverMessage);
+        connections.remove(gameData.gameID(), session);
 
-
+        if (teamColor != null) {
+            GameData newGame;
+            if (teamColor.equals("White")) {
+                newGame = new GameData(gameData.gameID(), null, gameData.blackUsername(), gameData.gameName(), gameData.game(), false);
+            } else {
+                newGame = new GameData(gameData.gameID(), gameData.whiteUsername(), null, gameData.gameName(), gameData.game(), false);
+            }
+            gameDAO.createGame(newGame);
+        }
     }
 }
 
