@@ -184,6 +184,7 @@ public class GameplayClient implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage serverMessage) {
+        System.out.println("Debug: Notified");
         switch (serverMessage.getServerMessageType()) {
             case ERROR -> printError(serverMessage);
             case LOAD_GAME -> printBoardUpdate(serverMessage);

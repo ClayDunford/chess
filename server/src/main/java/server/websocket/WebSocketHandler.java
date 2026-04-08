@@ -22,40 +22,42 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
-
-        System.out.println("Debug: Websocket Handler Initiated");
     }
 
     @Override
-    public void handleConnect(WsConnectContext ctx) {
+    public void handleConnect(WsConnectContext ctx) throws IOException{
         System.out.println("Websocket connected");
         ctx.enableAutomaticPings();
     }
 
     @Override
     public void handleMessage(WsMessageContext ctx) {
-        try {
-            System.out.println("Debug: Messaged received");
-            UserGameCommand userGameCommand = new Gson().fromJson(ctx.message(), UserGameCommand.class);
-            String authToken = userGameCommand.getAuthToken();
-            Integer gameID = userGameCommand.getGameID();
-            if (authDAO.getAuth(authToken) == null | gameDAO.getGame(gameID) == null) {
-                throw new BadRequestException();
-            }
-            String username = authDAO.getAuth(authToken).username();
-            switch (userGameCommand.getCommandType()) {
-                case CONNECT -> connect(gameID, username, ctx.session);
-                case MAKE_MOVE -> makeMove(userGameCommand, username, ctx.session);
-                case RESIGN -> resign(userGameCommand, username, ctx.session);
-                case LEAVE -> leave(userGameCommand, username, ctx.session);
-            }
 
+        System.out.println("RAW MESSAGE: " + ctx.message());
 
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (DataAccessException | BadRequestException | InvalidMoveException ex) {
-            sendMessage(ctx.session, ServerMessage.ServerMessageType.ERROR, ex.getMessage());
-        }
+//        try {
+//            System.out.println("Debug: Messaged received");
+//            UserGameCommand userGameCommand = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+//            String authToken = userGameCommand.getAuthToken();
+//            Integer gameID = userGameCommand.getGameID();
+//            if (authDAO.getAuth(authToken) == null | gameDAO.getGame(gameID) == null) {
+//                throw new BadRequestException();
+//            }
+//            String username = authDAO.getAuth(authToken).username();
+//            switch (userGameCommand.getCommandType()) {
+//                case CONNECT -> connect(gameID, username, ctx.session);
+//                case MAKE_MOVE -> makeMove(userGameCommand, username, ctx.session);
+//                case RESIGN -> resign(userGameCommand, username, ctx.session);
+//                case LEAVE -> leave(userGameCommand, username, ctx.session);
+//            }
+//
+//
+//        } catch (IOException ex) {
+//            System.out.println("Debug: Error");
+//            ex.printStackTrace();
+//        } catch (DataAccessException | BadRequestException | InvalidMoveException ex) {
+//            sendMessage(ctx.session, ServerMessage.ServerMessageType.ERROR, ex.getMessage());
+//        }
     }
 
     @Override
