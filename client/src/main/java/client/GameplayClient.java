@@ -1,9 +1,6 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 import com.google.gson.Gson;
@@ -56,12 +53,54 @@ public class GameplayClient implements NotificationHandler {
         }
     }
 
+    public void makeMove(String... params) throws ResponseException{
+        if(params.length < 4 && params.length >= 2 ) {
+            String startPosString = params[0];
+            ChessPosition startPos = positionParser(startPosString);
+            pieceAtPosition(startPos);
+            String endPosString = params[1];
+            ChessPosition endPos = positionParser(endPosString);
+            ChessPiece.PieceType promotionPiece;
+            if (params.length == 3) {
+                String promotion = params[2];
+                promotionPiece = promotionConverter(promotion);
+            } else {
+                promotionPiece = null;
+            }
+            ChessMove move = new ChessMove(startPos, endPos, promotionPiece);
+            validMoveChecker(move);
+
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected <Start Position> <End Position> <Promotion (If Relevant)>");
+    }
+
+    public void validMoveChecker(ChessMove move) throws ResponseException{
+        try {
+            ChessGame tempGame = new ChessGame();
+            tempGame.setBoard(currentBoard.getBoard());
+            tempGame.setTeamTurn(curColor);
+            tempGame.makeMove(move);
+        } catch (InvalidMoveException ex){
+            throw new ResponseException(ResponseException.Code.ClientError, "Invalid Move!");
+        }
+    }
+
+    public ChessPiece.PieceType promotionConverter(String input) throws ResponseException{
+        return switch (input) {
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            default -> throw new ResponseException(ResponseException.Code.ClientError, "Invalid Promotion Piece");
+        };
+    }
+
     public String help() {
         return """
                 - redraw - redraws the current board
                 - highlight <Piece Position> - Highlights the legal moves on the board
-                - move <Starting Piece Position> <Final Piece Position> - Make a move in the chess game
-                - resign - lose the game
+                - move <Starting Piece Position> <Final Piece Position> <Promotion (If Relevant)>- Make a move in the chess game
+                - resign - lose the game L
                 - leave - leaves the game
                 - help - possible commands
                 """;
@@ -75,9 +114,7 @@ public class GameplayClient implements NotificationHandler {
         if (params.length == 1) {
             String input = params[0];
             ChessPosition position = positionParser(input);
-            if (!pieceAtPosition(position)) {
-                throw new ResponseException(ResponseException.Code.ClientError, "No piece at position!");
-            }
+            pieceAtPosition(position);
             Collection<ChessMove> chessMoves = currentBoard.validMoves(position);
             ChessBoardGenerator boardGenerator = new ChessBoardGenerator(currentBoard, curColor);
             boardGenerator.moveToArray(chessMoves);
@@ -100,9 +137,11 @@ public class GameplayClient implements NotificationHandler {
 
         return new ChessPosition(row, col);
     }
-    private boolean pieceAtPosition(ChessPosition position) {
+    private void pieceAtPosition(ChessPosition position) throws ResponseException {
         ChessBoard board = currentBoard.getBoard();
-        return (board.getPiece(position) != null);
+        if (board.getPiece(position) != null) {
+            throw new ResponseException(ResponseException.Code.ClientError, "No piece at position!");
+        }
     }
 
     @Override
