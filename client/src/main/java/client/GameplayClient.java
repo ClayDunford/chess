@@ -1,6 +1,8 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPosition;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
@@ -11,6 +13,7 @@ import ui.ChessBoardGenerator;
 import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -43,7 +46,7 @@ public class GameplayClient implements NotificationHandler {
                 case "redraw" -> redraw();
                 case "move" -> makeMove();
                 case "resign" -> resign();
-                case "highlight" -> highlightLegalMoves();
+                case "highlight" -> highlightLegalMoves(params);
                 case "leave" -> leave();
                 default -> help();
 
@@ -65,26 +68,41 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public void redraw() {
-        new ChessBoardGenerator(currentBoard, curColor);
+        new ChessBoardGenerator(currentBoard, curColor).drawBoard();
     }
 
-    public void highlightLegalMoves(){
-
+    public void highlightLegalMoves(String... params) throws ResponseException{
+        if (params.length == 1) {
+            String input = params[0];
+            ChessPosition position = positionParser(input);
+            if (!pieceAtPosition(position)) {
+                throw new ResponseException(ResponseException.Code.ClientError, "No piece at position!");
+            }
+            Collection<ChessMove> chessMoves = currentBoard.validMoves(position);
+            ChessBoardGenerator boardGenerator = new ChessBoardGenerator(currentBoard, curColor);
+            boardGenerator.moveToArray(chessMoves);
+            boardGenerator.drawBoard();
+        }
+        throw new ResponseException(ResponseException.Code.ClientError, "Expected <Chess Position>");
     }
     private ChessPosition positionParser(String input) throws ResponseException{
-
         char[] tokens = input.toLowerCase().toCharArray();
         if (tokens.length > 2) {
             throw new ResponseException(ResponseException.Code.ClientError, "Invalid Chess position");
         }
-        char col = tokens[0];
-        char row = tokens[1];
-        if (Character.getNumericValue(col) < 9 | Character.getNumericValue(col) > 17) {
+        int col = Character.getNumericValue(tokens[0]) - 9;
+        int row = Character.getNumericValue(tokens[1]);
+        if (col < 1 | Character.getNumericValue(col) > 9) {
             throw new ResponseException(ResponseException.Code.ClientError, "Invalid Chess position");
         } if (Character.getNumericValue(row) < 1 | Character.getNumericValue(row) > 9) {
             throw new ResponseException(ResponseException.Code.ClientError, "Invalid Chess position");
         }
 
+        return new ChessPosition(row, col);
+    }
+    private boolean pieceAtPosition(ChessPosition position) {
+        ChessBoard board = currentBoard.getBoard();
+        return (board.getPiece(position) != null);
     }
 
     @Override
@@ -98,7 +116,7 @@ public class GameplayClient implements NotificationHandler {
 
     private void printBoardUpdate(ServerMessage serverMessage) {
         currentBoard = new Gson().fromJson(serverMessage.message, ChessGame.class);
-        new ChessBoardGenerator(currentBoard, curColor);
+        new ChessBoardGenerator(currentBoard, curColor).drawBoard();
     }
 
     private void printNotification(ServerMessage serverMessage) {

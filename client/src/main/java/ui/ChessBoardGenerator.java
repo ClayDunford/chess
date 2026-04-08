@@ -1,12 +1,10 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -14,6 +12,8 @@ public class ChessBoardGenerator {
     private final ChessBoard chessBoard;
     private final ChessGame.TeamColor curTeamColor;
     private final PrintStream out;
+    boolean[][] highlights = new boolean[8][8];
+    ChessPosition startPosition = null;
 
 
 
@@ -22,8 +22,6 @@ public class ChessBoardGenerator {
         chessBoard = chessGame.getBoard();
         curTeamColor = teamColor;
         out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        drawBoard();
-        out.print(RESET_TEXT_COLOR);
     }
 
     public void drawBoard() {
@@ -32,6 +30,7 @@ public class ChessBoardGenerator {
         drawHeaders();
         drawPieces();
         drawHeaders();
+        out.print(RESET_TEXT_COLOR);
     }
     
     private void drawPieces() {
@@ -57,9 +56,21 @@ public class ChessBoardGenerator {
             col = colReset;
             while (col < 9 && col > 0){
                 if (alternator) {
-                    out.print(SET_BG_COLOR_LIGHT_GREY);
+                    if (highlights[row - 1][col -1]) {
+                        out.print(SET_BG_COLOR_GREEN);
+                    } else{
+                        out.print(SET_BG_COLOR_LIGHT_GREY);
+                    }
                 } else {
-                    out.print(SET_BG_COLOR_RED);
+                    if (highlights[row - 1][col -1]) {
+                        out.print(SET_BG_COLOR_DARK_GREEN);
+                    } else {
+                        out.print(SET_BG_COLOR_RED);
+                    }
+                } if (startPosition != null) {
+                    if (startPosition.getColumn() == col && startPosition.getRow() == row) {
+                        out.print(SET_BG_COLOR_YELLOW);
+                    }
                 }
                 drawPiece(row, col);
 
@@ -89,6 +100,15 @@ public class ChessBoardGenerator {
             out.print(EMPTY);
         }
         out.print(" ");
+    }
+
+    public void moveToArray(Collection<ChessMove> moves) {
+        for (ChessMove move : moves) {
+            int row = move.getEndPosition().getRow();
+            int col = move.getEndPosition().getColumn();
+            highlights[row - 1][col - 1] = true;
+            startPosition = move.getStartPosition();
+        }
     }
 
     private String pieceConverter(ChessPiece piece) {
