@@ -18,20 +18,29 @@ public class GameplayClient implements NotificationHandler {
     private final Repl repl;
     private final ServerFacade server;
     private WebSocketFacade webSocket = null;
-    private String authToken;
+    private final String authToken;
+    private final int gameID;
     private ChessGame currentBoard = null;
     private ChessGame.TeamColor curColor;
+    private final boolean observing;
 
-    public GameplayClient(ServerFacade serverFacade, Repl passedRepl, String serverUrl) {
+    public GameplayClient(ServerFacade serverFacade, Repl passedRepl, String serverUrl, boolean observing) throws ResponseException{
         repl = passedRepl;
         server = serverFacade;
+        this.observing = observing;
         authToken = repl.authToken;
         curColor = repl.curColor;
+        gameID = repl.gameData.gameID();
         try {
             webSocket = new WebSocketFacade(serverUrl, this);
         } catch (ResponseException ex) {
             System.out.println(ex.getMessage());
         }
+        connect();
+    }
+
+    public void connect() throws ResponseException{
+        webSocket.connect(authToken, gameID);
     }
 
     public String eval (String input) {
@@ -39,21 +48,30 @@ public class GameplayClient implements NotificationHandler {
             String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
-                case "redraw" -> redraw();
-                case "move" -> makeMove();
-                case "resign" -> resign();
-                case "highlight" -> highlightLegalMoves(params);
-                case "leave" -> leave();
-                default -> help();
+            if (!observing) {
+                return switch (cmd) {
+                    case "redraw" -> redraw();
+                    case "move" -> makeMove();
+                    case "resign" -> resign();
+                    case "highlight" -> highlightLegalMoves(params);
+                    case "leave" -> leave();
+                    default -> help();
+                };
+            } else {
+                return switch (cmd) {
+                    case "redraw" -> redraw();
+                    case "highlight" -> highlightLegalMoves(params);
+                    case "leave" -> leave();
+                    default -> help();
+                };
+            }
 
-            };
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
     }
 
-    public void makeMove(String... params) throws ResponseException{
+    public String makeMove(String... params) throws ResponseException{
         if(params.length < 4 && params.length >= 2 ) {
             String startPosString = params[0];
             ChessPosition startPos = positionParser(startPosString);
@@ -70,6 +88,7 @@ public class GameplayClient implements NotificationHandler {
             ChessMove move = new ChessMove(startPos, endPos, promotionPiece);
             validMoveChecker(move);
 
+            return "Move made";
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <Start Position> <End Position> <Promotion (If Relevant)>");
     }
@@ -96,7 +115,17 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public String help() {
+        if (observing) {
+            return """
+                Observer Commands:
+                - redraw - redraws the current board
+                - highlight <Piece Position> - Highlights the legal moves on the board
+                - leave - leaves the game
+                - help - possible commands
+                """;
+        }
         return """
+                Player Commands
                 - redraw - redraws the current board
                 - highlight <Piece Position> - Highlights the legal moves on the board
                 - move <Starting Piece Position> <Final Piece Position> <Promotion (If Relevant)>- Make a move in the chess game
@@ -106,11 +135,19 @@ public class GameplayClient implements NotificationHandler {
                 """;
     }
 
-    public void redraw() {
-        new ChessBoardGenerator(currentBoard, curColor).drawBoard();
+    public String resign() {
+        return "Resigning...";
     }
 
-    public void highlightLegalMoves(String... params) throws ResponseException{
+    public String leave() {
+        return "Leaving game...";
+    }
+    public String redraw() {
+        new ChessBoardGenerator(currentBoard, curColor).drawBoard();
+        return (RESET_TEXT_COLOR);
+    }
+
+    public String highlightLegalMoves(String... params) throws ResponseException{
         if (params.length == 1) {
             String input = params[0];
             ChessPosition position = positionParser(input);
@@ -119,6 +156,7 @@ public class GameplayClient implements NotificationHandler {
             ChessBoardGenerator boardGenerator = new ChessBoardGenerator(currentBoard, curColor);
             boardGenerator.moveToArray(chessMoves);
             boardGenerator.drawBoard();
+            return "Valid moves generated";
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <Chess Position>");
     }

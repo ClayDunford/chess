@@ -22,6 +22,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
+
+        System.out.println("Debug: Websocket Handler Initiated");
     }
 
     @Override
@@ -33,6 +35,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleMessage(WsMessageContext ctx) {
         try {
+            System.out.println("Debug: Messaged received");
             UserGameCommand userGameCommand = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             String authToken = userGameCommand.getAuthToken();
             Integer gameID = userGameCommand.getGameID();
@@ -74,6 +77,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void connect(Integer gameID, String username, Session session) throws DataAccessException, IOException {
+
+
         connections.add(gameID, session);
         GameData gameData = gameDAO.getGame(gameID);
         String teamcolor = teamColorFinder(gameData, username);

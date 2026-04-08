@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessGame;
 import client.websocket.WebSocketFacade;
+import exception.ResponseException;
 import model.GameData;
 import serverfacade.ServerFacade;
 
@@ -12,7 +13,9 @@ import static ui.EscapeSequences.*;
 public class Repl {
     private final PreloginClient preloginClient;
     private final PostloginClient postloginClient;
-    private final GameplayClient gameplayClient;
+    private final ServerFacade server;
+    private final String serverURL;
+    public GameplayClient gameplayClient;
     private State currentState;
     public String authToken = null;
     boolean inGame = false;
@@ -20,12 +23,13 @@ public class Repl {
     GameData gameData = null;
 
     public Repl(String serverUrl) {
-        ServerFacade server = new ServerFacade(serverUrl);
+        this.serverURL = serverUrl;
+        server = new ServerFacade(serverUrl);
         currentState = State.SIGNEDOUT;
 
         preloginClient = new PreloginClient(server, this);
-        postloginClient = new PostloginClient(server, this);
-        gameplayClient = new GameplayClient(server, this, serverUrl);
+        postloginClient = new PostloginClient(server, this, serverUrl);
+        //gameplayClient = new GameplayClient(server, this, serverUrl);
 
     }
 
@@ -40,8 +44,6 @@ public class Repl {
                 currentState = State.SIGNEDIN;
                 if (inGame) {
                     currentState = State.GAMEPLAY;
-                } else {
-                    currentState = State.SIGNEDOUT;
                 }
             } else {
                 currentState = State.SIGNEDOUT;
@@ -67,6 +69,12 @@ public class Repl {
         System.out.println();
     }
 
+    public void stateTransition(boolean observing, String gameID) throws ResponseException {
+        inGame = true;
+        gameData = postloginClient.currentGameList.get(Integer.parseInt(gameID) - 1);
+        curColor = postloginClient.curColor;
+        gameplayClient = new GameplayClient(server, this, serverURL, observing);
+    }
 
     public void printPrompt() {
         System.out.print("\n"+RESET_TEXT_COLOR + currentState + ">>>");

@@ -16,14 +16,16 @@ import java.util.List;
 public class PostloginClient {
     private final Repl repl;
     private final ServerFacade server;
+    private final String serverURL;
     private String authToken;
-    private List<GameData> currentGameList = new ArrayList<>();
-    private ChessGame.TeamColor curColor;
+    public List<GameData> currentGameList = new ArrayList<>();
+    public ChessGame.TeamColor curColor;
 
-    public PostloginClient(ServerFacade serverFacade, Repl passedRepl) {
+    public PostloginClient(ServerFacade serverFacade, Repl passedRepl, String serverURL) {
         repl = passedRepl;
         server = serverFacade;
         authToken = repl.authToken;
+        this.serverURL = serverURL;
     }
 
     public String eval (String input) {
@@ -107,9 +109,7 @@ public class PostloginClient {
 
             JoinGameRequest joinGameRequest = new JoinGameRequest(teamColor, Integer.parseInt(gameID));
             server.joinGame(authToken, joinGameRequest);
-            repl.inGame = true;
-            repl.gameData = currentGameList.get(Integer.parseInt(gameID) - 1);
-            repl.curColor = curColor;
+            repl.stateTransition(false, gameID);
             return String.format("Joining %s", currentGameList.get(Integer.parseInt(gameID) - 1).gameName()) ;
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <ID> [WHITE|BLACK]");
@@ -122,13 +122,12 @@ public class PostloginClient {
         if (params.length == 1) {
             String gameID = params[0];
             validateGameID(gameID);
-            repl.inGame = true;
-            repl.gameData = currentGameList.get(Integer.parseInt(gameID) - 1);
-            repl.curColor = curColor;
+            repl.stateTransition(true, gameID);
             return String.format("Observing %s", currentGameList.get(Integer.parseInt(gameID) - 1).gameName()) ;
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <ID>");
     }
+
     private String colorChecking(String teamColorString) throws ResponseException{
         if (!teamColorString.equals("black") && !teamColorString.equals("white")) {
             throw new ResponseException(ResponseException.Code.ClientError, "Expected [WHITE|BLACK] for team color");
