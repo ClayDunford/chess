@@ -51,7 +51,7 @@ public class GameplayClient implements NotificationHandler {
             if (!observing) {
                 return switch (cmd) {
                     case "redraw" -> redraw();
-                    case "move" -> makeMove();
+                    case "move" -> makeMove(params);
                     case "resign" -> resign();
                     case "highlight" -> highlightLegalMoves(params);
                     case "leave" -> leave();
@@ -87,7 +87,7 @@ public class GameplayClient implements NotificationHandler {
             }
             ChessMove move = new ChessMove(startPos, endPos, promotionPiece);
             validMoveChecker(move);
-
+            webSocket.makeMove(authToken, gameID, move);
             return "Move made";
         }
         throw new ResponseException(ResponseException.Code.ClientError, "Expected <Start Position> <End Position> <Promotion (If Relevant)>");
@@ -167,9 +167,9 @@ public class GameplayClient implements NotificationHandler {
         }
         int col = Character.getNumericValue(tokens[0]) - 9;
         int row = Character.getNumericValue(tokens[1]);
-        if (col < 1 | Character.getNumericValue(col) > 9) {
+        if (col < 1 | col > 9) {
             throw new ResponseException(ResponseException.Code.ClientError, "Invalid Chess position");
-        } if (Character.getNumericValue(row) < 1 | Character.getNumericValue(row) > 9) {
+        } if (row < 1 | row > 9) {
             throw new ResponseException(ResponseException.Code.ClientError, "Invalid Chess position");
         }
 
@@ -177,14 +177,13 @@ public class GameplayClient implements NotificationHandler {
     }
     private void pieceAtPosition(ChessPosition position) throws ResponseException {
         ChessBoard board = currentBoard.getBoard();
-        if (board.getPiece(position) != null) {
+        if (board.getPiece(position) == null) {
             throw new ResponseException(ResponseException.Code.ClientError, "No piece at position!");
         }
     }
 
     @Override
     public void notify(ServerMessage serverMessage) {
-        System.out.println("Debug: Notified");
         switch (serverMessage.getServerMessageType()) {
             case ERROR -> printError(serverMessage);
             case LOAD_GAME -> printBoardUpdate(serverMessage);
@@ -193,7 +192,7 @@ public class GameplayClient implements NotificationHandler {
     }
 
     private void printBoardUpdate(ServerMessage serverMessage) {
-        currentBoard = new Gson().fromJson(serverMessage.message, ChessGame.class);
+        currentBoard = new Gson().fromJson(serverMessage.game, ChessGame.class);
         new ChessBoardGenerator(currentBoard, curColor).drawBoard();
     }
 

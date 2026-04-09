@@ -26,7 +26,6 @@ public class WebSocketFacade extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
 
-            System.out.println("session id: " + session.getId());
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
 
@@ -47,7 +46,7 @@ public class WebSocketFacade extends Endpoint {
     public void connect(String authToken, Integer gameID) throws ResponseException{
         try {
             UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
-            System.out.println(new Gson().toJson(command));
+
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
 
         } catch(IOException ex) {
