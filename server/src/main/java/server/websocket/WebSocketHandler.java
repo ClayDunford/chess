@@ -114,16 +114,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             ChessMove newMove = command.getMove();
             pieceChecker(gameData, username, newMove);
             ChessGame currentGame = gameData.game();
-            String teamColorString = teamColorFinder(gameData, username);
-            ChessGame.TeamColor teamColor;
-            if (teamColorString.equals("White")) {
-                teamColor = ChessGame.TeamColor.WHITE;
-            } else {
-                teamColor = ChessGame.TeamColor.BLACK;
-            }
-            if (currentGame.getTeamTurn() != teamColor) {
-                throw new InvalidMoveException("Incorrect Turn");
-            }
             currentGame.makeMove(newMove);
             gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), currentGame, false);
             gameDAO.createGame(gameData);
@@ -153,7 +143,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private boolean resignedChecker(GameData gameData) {
-        return gameData.resigned();
+        return gameData.resigned() || gameData.game().isResigned();
     }
 
     private void gameChecker(GameData gameData, Session session) throws IOException {
@@ -187,12 +177,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void resign(UserGameCommand command, String username, Session session) throws DataAccessException, IOException, InvalidMoveException{
         GameData gameData = gameDAO.getGame(command.getGameID());
         if (resignedChecker(gameData)) {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Game already over!");
         }
         String teamColor = teamColorFinder(gameData, username);
         if (teamColor == null) {
             throw new InvalidMoveException();
         }
+        gameData.game().setResigned(true);
         gameData = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game(), true);
         gameDAO.createGame(gameData);
         String message = String.format("%s (%s) has resigned!", username, teamColor);

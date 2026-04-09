@@ -69,7 +69,7 @@ public class ChessBoardGenerator {
                     }
                 } if (startPosition != null) {
                     if (startPosition.getColumn() == col && startPosition.getRow() == row) {
-                        out.print(SET_BG_COLOR_YELLOW);
+                        out.print(SET_BG_COLOR_BLUE);
                     }
                 }
                 drawPiece(row, col);

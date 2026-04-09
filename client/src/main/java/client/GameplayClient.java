@@ -11,6 +11,7 @@ import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
@@ -72,6 +73,12 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public String makeMove(String... params) throws ResponseException{
+        if (currentBoard.isResigned()) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Game is over!");
+        }
+        if (currentBoard.getTeamTurn() != curColor) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Not Currently Your Turn!");
+        }
         if(params.length < 4 && params.length >= 2 ) {
             String startPosString = params[0];
             ChessPosition startPos = positionParser(startPosString);
@@ -96,7 +103,9 @@ public class GameplayClient implements NotificationHandler {
     public void validMoveChecker(ChessMove move) throws ResponseException{
         try {
             ChessGame tempGame = new ChessGame();
-            tempGame.setBoard(currentBoard.getBoard());
+            ChessBoard tempBoard = new ChessBoard();
+            tempBoard.setSquares(currentBoard.getBoard().squareDeepCopy());
+            tempGame.setBoard(tempBoard);
             tempGame.setTeamTurn(curColor);
             tempGame.makeMove(move);
         } catch (InvalidMoveException ex){
@@ -135,11 +144,26 @@ public class GameplayClient implements NotificationHandler {
                 """;
     }
 
-    public String resign() {
-        return "Resigning...";
+    public String resign() throws ResponseException{
+        if (currentBoard.isResigned()) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Game is already over!");
+        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Are you sure you want to resign? (y|n)");
+        repl.printPrompt();
+        String input = scanner.nextLine();
+        input = input.toLowerCase();
+        if (input.equals("y")) {
+            webSocket.resign(authToken, gameID);
+            return "Game Resigned! You have lost!";
+        } else {
+            return "Resignation cancelled";
+        }
     }
 
-    public String leave() {
+    public String leave() throws ResponseException{
+        webSocket.disconnect(authToken, gameID);
+        repl.inGame = false;
         return "Leaving game...";
     }
     public String redraw() {
@@ -167,9 +191,9 @@ public class GameplayClient implements NotificationHandler {
         }
         int col = Character.getNumericValue(tokens[0]) - 9;
         int row = Character.getNumericValue(tokens[1]);
-        if (col < 1 | col > 9) {
+        if (col < 1 | col > 8) {
             throw new ResponseException(ResponseException.Code.ClientError, "Invalid Chess position");
-        } if (row < 1 | row > 9) {
+        } if (row < 1 | row > 8) {
             throw new ResponseException(ResponseException.Code.ClientError, "Invalid Chess position");
         }
 
@@ -193,15 +217,23 @@ public class GameplayClient implements NotificationHandler {
 
     private void printBoardUpdate(ServerMessage serverMessage) {
         currentBoard = new Gson().fromJson(serverMessage.game, ChessGame.class);
+        System.out.println("\n");
         new ChessBoardGenerator(currentBoard, curColor).drawBoard();
-    }
-
-    private void printNotification(ServerMessage serverMessage) {
-        System.out.println(SET_TEXT_COLOR_GREEN + serverMessage.message);
         repl.printPrompt();
     }
 
+    private void printNotification(ServerMessage serverMessage) {
+        System.out.println("\n");
+        System.out.println(SET_TEXT_COLOR_GREEN + serverMessage.message);
+        repl.printPrompt();
+
+        if (serverMessage.message.contains("has resigned!")) {
+            currentBoard.setResigned(true);
+        }
+    }
+
     private void printError(ServerMessage serverMessage) {
+        System.out.println("\n");
         System.out.println(SET_TEXT_COLOR_RED + serverMessage.errorMessage);
         repl.printPrompt();
     }

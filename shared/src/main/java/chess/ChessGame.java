@@ -14,6 +14,8 @@ public class ChessGame {
 
     ChessBoard board;
     TeamColor curColor;
+    boolean resigned = false;
+
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
@@ -191,6 +193,15 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+
+    public boolean isResigned() {
+        return resigned;
+    }
+
+    public void setResigned(boolean resigned) {
+        this.resigned =resigned;
     }
 
     @Override

@@ -70,6 +70,10 @@ public class ChessBoard {
         return copy;
     }
 
+    public void setSquares(ChessPiece[][] newBoard) {
+        squares = newBoard;
+    }
+
 
 
     @Override

@@ -36,7 +36,8 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return String.format("[%d, %d]", row, col);
+        char rank = Character.forDigit(col + 9, 16);
+        return String.format("%c%d", rank, col);
     }
 
     @Override
